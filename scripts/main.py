@@ -92,7 +92,7 @@ def run_generate_chat(stdscr):
     draw_screen(stdscr, "Text 2 Beluga", "Select a chat script file...\n\n", menu_items=[])
     curses.napms(500)
     
-    final_video = '../final_video.mp4'
+    final_video = f'{base_dir}/{os.pardir}/final_video.mp4'
     if os.path.isfile(final_video):
         os.remove(final_video)
     if os.path.exists('../chat'):
