@@ -1,4 +1,5 @@
 from PIL import Image, ImageFont, ImageDraw
+from io import BytesIO
 from pilmoji import Pilmoji
 import sys
 import datetime
@@ -56,17 +57,18 @@ MESSAGE_POSITIONS = [(MESSAGE_X, MESSAGE_Y_INIT + i * MESSAGE_DY) for i in range
 
 # Load fonts
 font = "whitney" # Change this according to the font you want to use
-name_font = ImageFont.truetype(os.path.join(f'../assets/fonts/{font}', 'semibold.ttf'), NAME_FONT_SIZE)
-time_font = ImageFont.truetype(os.path.join(f'../assets/fonts/{font}', 'semibold.ttf'), TIME_FONT_SIZE)
-message_font = ImageFont.truetype(os.path.join(f'../assets/fonts/{font}', 'medium.ttf'), MESSAGE_FONT_SIZE)
-message_italic_font = ImageFont.truetype(os.path.join(f'../assets/fonts/{font}', 'medium_italic.ttf'), MESSAGE_FONT_SIZE)
-message_bold_font = ImageFont.truetype(os.path.join(f'../assets/fonts/{font}', 'bold.ttf'), MESSAGE_FONT_SIZE)
-message_italic_bold_font = ImageFont.truetype(os.path.join(f'../assets/fonts/{font}', 'bold_italic.ttf'), MESSAGE_FONT_SIZE)
-message_mention_font = ImageFont.truetype(os.path.join(f'../assets/fonts/{font}', 'semibold.ttf'), MESSAGE_FONT_SIZE)
-message_mention_italic_font = ImageFont.truetype(os.path.join(f'../assets/fonts/{font}', 'semibold_italic.ttf'), MESSAGE_FONT_SIZE)
+font_dir = os.path.join("/home","atsuomi","Documents","projects","cloned-repo","Text-2-Beluga", "assets", "fonts", font)
+name_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf'), NAME_FONT_SIZE)
+time_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf'), TIME_FONT_SIZE)
+message_font = ImageFont.truetype(os.path.join(font_dir, 'medium.ttf'), MESSAGE_FONT_SIZE)
+message_italic_font = ImageFont.truetype(os.path.join(font_dir, 'medium_italic.ttf'), MESSAGE_FONT_SIZE)
+message_bold_font = ImageFont.truetype(os.path.join(font_dir, 'bold.ttf'), MESSAGE_FONT_SIZE)
+message_italic_bold_font = ImageFont.truetype(os.path.join(font_dir, 'bold_italic.ttf'), MESSAGE_FONT_SIZE)
+message_mention_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf'), MESSAGE_FONT_SIZE)
+message_mention_italic_font = ImageFont.truetype(os.path.join(font_dir, 'semibold_italic.ttf'), MESSAGE_FONT_SIZE)
 
 # Load profile picture dictionary
-with open('../assets/profile_pictures/characters.json', encoding="utf8") as file:
+with open('/home/atsuomi/Documents/projects/cloned-repo/Text-2-Beluga/assets/profile_pictures/characters.json', encoding="utf8") as file:
     characters_dict = json.load(file)
 
 
