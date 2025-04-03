@@ -6,11 +6,11 @@
 - make a script validator
 - good cmd-line user interface
 - write a README file
+- allow for strikethrough message text
 
 ----------------------------------------------------
 
 # (TRY) TODO
-- allow for strikethrough message text
 - ability to add background music
 - AI powered chat script creator
 - support for links (URLs)
