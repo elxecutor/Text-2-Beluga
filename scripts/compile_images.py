@@ -1,8 +1,10 @@
 import os
 from sound_effects import add_sounds
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
 def gen_vid(filename):
-    input_folder = '../chat/'
+    input_folder = f'{base_dir}/{os.pardir}/chat/'
     image_files = sorted([f for f in os.listdir(input_folder) if f.endswith('.png')])
 
     # Read durations from the file.
