@@ -136,14 +136,16 @@ def generate_chat(messages, name_time, profpic_file, color):
             continue
 
         # Tokenize for bold (**), italic (__), and mentions (@...)
-        tokens = re.split(r'(\*\*|__)', message)
-        bold = italic = False
+        tokens = re.split(r'(\*\*|__|~~)', message)
+        bold = italic = strikethrough = False
         with Pilmoji(template) as pilmoji:
             for token in tokens:
                 if token == '**':
                     bold = not bold
                 elif token == '__':
                     italic = not italic
+                elif token == '~~':
+                    strikethrough = not strikethrough
                 else:
                     if not token:
                         continue
@@ -189,6 +191,22 @@ def generate_chat(messages, name_time, profpic_file, color):
                                 font_used = message_font
                             pilmoji.text((current_x, y_pos), part, MESSAGE_FONT_COLOR, font=font_used,
                                          emoji_position_offset=(0, 8), emoji_scale_factor=1.2)
+                            # current_x += font_used.getbbox(part)[2] - font_used.getbbox(part)[0]
+
+                            if strikethrough:
+                                # Calculate strikethrough position
+                                ascent, descent = font_used.getmetrics()
+                                text_height = ascent + descent
+                                strike_y = y_pos + ascent // 2
+                                # Draw line covering the text width
+                                text_width = font_used.getbbox(part)[2] - font_used.getbbox(part)[0]
+                                draw_template.line(
+                                    [(current_x, strike_y), 
+                                    (current_x + text_width, strike_y)],
+                                    fill=MESSAGE_FONT_COLOR,
+                                    width=2
+                                )
+                            
                             current_x += font_used.getbbox(part)[2] - font_used.getbbox(part)[0]
     return template
 

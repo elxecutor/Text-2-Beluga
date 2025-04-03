@@ -204,6 +204,7 @@ def formatting(stdscr, current_row, left_margin):
         "- There should be an empty line between a character's message and the next character's name.",
         "- Message text enclosed within ** and ** will be shown in bold.",
         "- Message text enclosed within __ and __ will be shown in italics.",
+        "- Message text enclosed within ~~ and ~~ will be shown with strikethrough.",
         "- Emojis are supported in messages.",
         "- Different characters can be mentioned in a message by writing \"@\" followed by a character's name.",
         "",
