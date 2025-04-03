@@ -1,6 +1,8 @@
 import os
 from moviepy.editor import VideoFileClip, AudioFileClip, CompositeAudioClip
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
 def add_sounds(filename):
     # Load the video file
     video = VideoFileClip("output.mp4")
@@ -19,7 +21,7 @@ def add_sounds(filename):
                 if "#!" in line:
                     parts = line.split('$^')
                     duration_part, sound_part = parts[1].split("#!")
-                    audio_file = f'../assets/sounds/mp3/{sound_part.strip()}.mp3'
+                    audio_file = f'{base_dir}/{os.pardir}/assets/sounds/mp3/{sound_part.strip()}.mp3'
                     audio_clip = AudioFileClip(audio_file).set_start(duration)
                     audio_clips.append(audio_clip)
                     duration += float(duration_part)
@@ -32,7 +34,7 @@ def add_sounds(filename):
                 if "#!" in line:
                     parts = line.split('$^')
                     duration_part, sound_part = parts[1].split("#!")
-                    audio_file = f'../assets/sounds/mp3/{sound_part.strip()}.mp3'
+                    audio_file = f'{base_dir}/{os.pardir}/assets/sounds/mp3/{sound_part.strip()}.mp3'
                     audio_clip = AudioFileClip(audio_file).set_start(duration)
                     audio_clips.append(audio_clip)
                     duration += float(duration_part)

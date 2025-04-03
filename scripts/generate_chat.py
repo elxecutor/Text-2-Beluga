@@ -12,6 +12,9 @@ import re
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QFileDialog
 
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
 # CONSTANTS
 WORLD_WIDTH = 1777
 WORLD_Y_INIT_MESSAGE = 231
@@ -57,7 +60,7 @@ MESSAGE_POSITIONS = [(MESSAGE_X, MESSAGE_Y_INIT + i * MESSAGE_DY) for i in range
 
 # Load fonts
 font = "whitney" # Change this according to the font you want to use
-font_dir = os.path.join("/home","atsuomi","Documents","projects","cloned-repo","Text-2-Beluga", "assets", "fonts", font)
+font_dir = os.path.join(base_dir, os.pardir, "assets", "fonts", font)
 name_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf'), NAME_FONT_SIZE)
 time_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf'), TIME_FONT_SIZE)
 message_font = ImageFont.truetype(os.path.join(font_dir, 'medium.ttf'), MESSAGE_FONT_SIZE)
@@ -68,7 +71,7 @@ message_mention_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf')
 message_mention_italic_font = ImageFont.truetype(os.path.join(font_dir, 'semibold_italic.ttf'), MESSAGE_FONT_SIZE)
 
 # Load profile picture dictionary
-with open('/home/atsuomi/Documents/projects/cloned-repo/Text-2-Beluga/assets/profile_pictures/characters.json', encoding="utf8") as file:
+with open(f'{base_dir}/{os.pardir}/assets/profile_pictures/characters.json', encoding="utf8") as file:
     characters_dict = json.load(file)
 
 
@@ -96,7 +99,7 @@ def generate_chat(messages, name_time, profpic_file, color):
     
     # Open and process profile picture
     prof_pic = Image.open(profpic_file)
-    prof_pic.thumbnail((sys.maxsize, PROFPIC_WIDTH), Image.ANTIALIAS)
+    prof_pic.thumbnail((sys.maxsize, PROFPIC_WIDTH), Image.LANCZOS)
     mask = Image.new("L", prof_pic.size, 0)
     ImageDraw.Draw(mask).ellipse([(0, 0), (PROFPIC_WIDTH, PROFPIC_WIDTH)], fill=255)
     
@@ -201,7 +204,7 @@ def generate_joined_message(name, time, template_str, arrow_x, color=NAME_FONT_C
     template_img = Image.new(mode='RGBA', size=(WORLD_WIDTH, WORLD_HEIGHT_JOINED), color=WORLD_COLOR)
     draw_template = ImageDraw.Draw(template_img)
     
-    arrow = Image.open("../assets/green_arrow.png")
+    arrow = Image.open(f"{base_dir}/{os.pardir}/assets/green_arrow.png")
     arrow.thumbnail((40, 40))
     text_x = arrow_x + arrow.width + 60
 
@@ -306,7 +309,7 @@ def save_images(lines, init_time, dt=30):
         image = generate_chat(
             messages=current_lines,
             name_time=name_time,
-            profpic_file=os.path.join('../assets/profile_pictures', characters_dict[current_name]["profile_pic"]),
+            profpic_file=os.path.join(f'{base_dir}/{os.pardir}/assets/profile_pictures', characters_dict[current_name]["profile_pic"]),
             color=characters_dict[current_name]["role_color"]
         )
         image.save(f'../chat/{msg_number:03d}.png')

@@ -17,47 +17,74 @@ except ImportError:
     def figlet_format(text):
         return text.upper()
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Helper function to update header and description in a dedicated screen area.
 def draw_screen(stdscr, header, description, menu_items=None, current_row=None, left_margin=4):
     stdscr.clear()
     height, width = stdscr.getmaxyx()
 
-    # Draw header using pyfiglet.
-    header_text = figlet_format(header)
-    header_lines = header_text.splitlines()
+    # Draw header using pyfiglet
     y = 1
-    for line in header_lines:
-        stdscr.attron(curses.color_pair(1))
-        stdscr.addstr(y, left_margin, line[:width - left_margin - 4])
-        stdscr.attroff(curses.color_pair(1))
-        y += 1
+    try:
+        header_text = figlet_format(header)
+        header_lines = header_text.splitlines()
+        for line in header_lines:
+            if y >= height - 1:
+                break
+            truncated = line[:max(0, width - left_margin)]
+            try:
+                stdscr.attron(curses.color_pair(1))
+                stdscr.addstr(y, left_margin, truncated)
+                stdscr.attroff(curses.color_pair(1))
+            except curses.error:
+                pass
+            y += 1
+    except curses.error:
+        pass
 
-    # Wrap description text to fit the width with left margin = right margin = 4.
-    desc_width = width - left_margin * 2
-    wrapped_desc = textwrap.fill(description, width=desc_width)
-    for line in wrapped_desc.splitlines():
-        stdscr.attron(curses.color_pair(3))
-        stdscr.addstr(y, left_margin, line)
-        stdscr.attroff(curses.color_pair(3))
-        y += 1
+    # Draw description text
+    try:
+        desc_width = max(0, width - left_margin * 2)
+        wrapped_desc = textwrap.fill(description, width=desc_width)
+        for line in wrapped_desc.splitlines():
+            if y >= height - 1:
+                break
+            truncated = line[:max(0, width - left_margin)]
+            try:
+                stdscr.attron(curses.color_pair(3))
+                stdscr.addstr(y, left_margin, truncated)
+                stdscr.attroff(curses.color_pair(3))
+            except curses.error:
+                pass
+            y += 1
+    except curses.error:
+        pass
 
-    # If a menu is provided, render it.
+    # Draw menu items
     if menu_items is not None:
         y += 1
         for idx, item in enumerate(menu_items):
-            if idx == current_row:
-                stdscr.attron(curses.color_pair(2))
-                stdscr.addstr(y, left_margin, f"> {item}")
-                stdscr.attroff(curses.color_pair(2))
-            else:
-                stdscr.attron(curses.color_pair(3))
-                stdscr.addstr(y, left_margin, f"  {item}")
-                stdscr.attroff(curses.color_pair(3))
+            if y >= height - 1:
+                break
+            prefix = "> " if idx == current_row else "  "
+            line = f"{prefix}{item}"
+            truncated = line[:max(0, width - left_margin)]
+            
+            try:
+                if idx == current_row:
+                    stdscr.attron(curses.color_pair(2))
+                    stdscr.addstr(y, left_margin, truncated)
+                    stdscr.attroff(curses.color_pair(2))
+                else:
+                    stdscr.attron(curses.color_pair(3))
+                    stdscr.addstr(y, left_margin, truncated)
+                    stdscr.attroff(curses.color_pair(3))
+            except curses.error:
+                pass
             y += 1
 
     stdscr.refresh()
-
 
 def run_generate_chat(stdscr):
     left_margin = 4
@@ -204,7 +231,7 @@ def sounds(stdscr, current_row, left_margin):
     description = "> Use the arrow keys to navigate through the available sound effects. Press [ENTER] to listen to the selected sound effect."
     
     menu_items = []
-    for file in os.listdir(os.path.join("..", "assets", "sounds", "mp3")):
+    for file in os.listdir(os.path.join(base_dir, os.pardir, "assets", "sounds", "mp3")):
         if file.endswith(".mp3"):
             menu_items.append(file.replace(".mp3", ""))
     menu_items.append("                     ")
@@ -224,7 +251,7 @@ def sounds(stdscr, current_row, left_margin):
             elif current_row == (len(menu_items) - 2):
                 continue
             else:
-                playsound(f'{os.path.join("..", "assets", "sounds", "mp3", menu_items[current_row] + ".mp3")}')
+                playsound(f'{os.path.join(base_dir, os.pardir, "assets", "sounds", "mp3", menu_items[current_row] + ".mp3")}')
 
 ################################################
 ################################################

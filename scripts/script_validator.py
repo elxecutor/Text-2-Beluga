@@ -4,6 +4,8 @@ import re
 import argparse
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
 def get_filename():
     """Opens a file dialog and returns the selected filename."""
     app = QApplication(sys.argv)
@@ -25,7 +27,7 @@ def validate_script_lines(lines):
       - The first non-empty, non-comment, non-WELCOME line in a block should be a name line (must contain a colon).
       - Subsequent lines in that block (chat messages) must contain the delimiter '$^' with a valid float duration,
         optionally followed by a sound marker starting with "#!".
-      - If a sound marker is present, the referenced sound file (../assets/sounds/mp3/<sound>.mp3) must exist.
+      - If a sound marker is present, the referenced sound file (/assets/sounds/mp3/<sound>.mp3) must exist.
     """
     errors = []
     state = "waiting_for_name"  # or "collecting_messages"
@@ -65,7 +67,7 @@ def validate_script_lines(lines):
                         dur_str = dur_str.strip()
                         sound_name = sound_marker.strip()
                         # Check that the sound effect file exists.
-                        sound_path = os.path.join("..", "assets", "sounds", "mp3", f"{sound_name}.mp3")
+                        sound_path = os.path.join(base_dir, os.pardir, "assets", "sounds", "mp3", f"{sound_name}.mp3")
                         if not os.path.isfile(sound_path):
                             errors.append(f"Line {idx}: Sound effect '{sound_name}' does not exist at expected location: {sound_path}")
                     else:
