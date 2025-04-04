@@ -12,22 +12,13 @@ import re
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QFileDialog
 
-
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # CONSTANTS
-# Typing indicator constants
-TYPING_HEIGHT = 100  # Same as joined message height
-TYPING_DOT_COLOR = (142, 146, 151)  # Discord's exact dot color
-TYPING_DOT_SIZE = 8  # Dot diameter
-TYPING_DOT_SPACING = 14  # Space between dots
-TYPING_TEXT_OFFSET = 20  # Space between text and dots
-TYPING_ANIMATION_FRAMES = 3  # Number of animation frames
-TYPING_FRAME_DURATION = 0.3  # Duration per frame in seconds
 WORLD_WIDTH = 1777
 WORLD_Y_INIT_MESSAGE = 231
 WORLD_DY = 70
-WORLD_HEIGHTS_MESSAGE = [WORLD_Y_INIT_MESSAGE + i * WORLD_DY for i in range(5)]  # Max 5 messages
+WORLD_HEIGHTS_MESSAGE = [WORLD_Y_INIT_MESSAGE + i * WORLD_DY for i in range(5)]
 WORLD_COLOR = (54, 57, 63, 255)
 
 WORLD_HEIGHT_JOINED = 100
@@ -49,6 +40,15 @@ JOINED_TEXTS = [
     "Yay you made it, CHARACTER!",
 ]
 
+# Typing indicator constants
+TYPING_HEIGHT = 100
+TYPING_DOT_COLOR = (142, 146, 151)
+TYPING_DOT_SIZE = 8
+TYPING_DOT_SPACING = 14
+TYPING_TEXT_OFFSET = 20
+TYPING_ANIMATION_FRAMES = 3
+TYPING_FRAME_DURATION = 0.3
+
 PROFPIC_WIDTH = 120
 PROFPIC_POSITION = (36, 45)
 
@@ -59,15 +59,15 @@ NAME_FONT_COLOR = (255, 255, 255)
 TIME_FONT_COLOR = (148, 155, 164)
 MESSAGE_FONT_COLOR = (220, 222, 225)
 NAME_POSITION = (190, 53)
-TIME_POSITION_Y = 67  # X to be determined from name length
+TIME_POSITION_Y = 67
 NAME_TIME_SPACING = 25
 MESSAGE_X = 190
 MESSAGE_Y_INIT = 115
 MESSAGE_DY = 70
 MESSAGE_POSITIONS = [(MESSAGE_X, MESSAGE_Y_INIT + i * MESSAGE_DY) for i in range(5)]
 
-# Load fonts
-font = "whitney" # Change this according to the font you want to use
+# Load fonts and character data
+font = "whitney"
 font_dir = os.path.join(base_dir, os.pardir, "assets", "fonts", font)
 name_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf'), NAME_FONT_SIZE)
 time_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf'), TIME_FONT_SIZE)
@@ -78,14 +78,8 @@ message_italic_bold_font = ImageFont.truetype(os.path.join(font_dir, 'bold_itali
 message_mention_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf'), MESSAGE_FONT_SIZE)
 message_mention_italic_font = ImageFont.truetype(os.path.join(font_dir, 'semibold_italic.ttf'), MESSAGE_FONT_SIZE)
 
-# Load profile picture dictionary
 with open(f'{base_dir}/{os.pardir}/assets/profile_pictures/characters.json', encoding="utf8") as file:
     characters_dict = json.load(file)
-
-
-def is_emoji_message(message):
-    """Return True if the message contains only emoji characters."""
-    return bool(message) and all(regex.match(r'^\p{Emoji}+$', char) for char in message.strip())
 
 def generate_typing_indicator(name, color, frame=0):
     """Generates animated typing indicator with bouncing dots"""
@@ -104,7 +98,7 @@ def generate_typing_indicator(name, color, frame=0):
     dots_y = text_y + name_font.getbbox(text)[3] // 2
     
     # Dot animation positions (middle dot bounces)
-    dot_offsets = [0, 3 - abs(frame - 1), 0]  # [0, 2, 0] for frame 1
+    dot_offsets = [0, 3 - abs(frame - 1), 0]
     
     # Draw three animated dots
     for i in range(3):
@@ -119,6 +113,11 @@ def generate_typing_indicator(name, color, frame=0):
         )
     
     return template
+
+
+def is_emoji_message(message):
+    """Return True if the message contains only emoji characters."""
+    return bool(message) and all(regex.match(r'^\p{Emoji}+$', char) for char in message.strip())
 
 def generate_chat(messages, name_time, profpic_file, color):
     """
@@ -353,9 +352,10 @@ def save_images(lines, init_time, dt=30):
             current_time += datetime.timedelta(seconds=dt)
             msg_number += 1
             continue
+        else:
+            joined_messages = {}
 
         if name_up_next:
-            # Extract and validate name
             if ':' not in line:
                 raise ValueError(f"Missing colon in name line: {line}")
             
@@ -383,15 +383,6 @@ def save_images(lines, init_time, dt=30):
             current_time += datetime.timedelta(
                 seconds=TYPING_FRAME_DURATION * TYPING_ANIMATION_FRAMES
             )
-            name_up_next = False
-            continue
-        else:
-            joined_messages = {}
-
-        if name_up_next:
-            current_name = line.split(':')[0]
-            hour = current_time.hour % 12 or 12
-            name_time = [current_name, f'{hour}:{current_time.minute:02d}']
             name_up_next = False
             continue
 

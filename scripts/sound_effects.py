@@ -1,18 +1,13 @@
 import os
 from moviepy.editor import VideoFileClip, AudioFileClip, CompositeAudioClip
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
-# Typing indicator constants
-TYPING_HEIGHT = 100  # Same as joined message height
-TYPING_DOT_COLOR = (142, 146, 151)  # Discord's exact dot color
-TYPING_DOT_SIZE = 8  # Dot diameter
-TYPING_DOT_SPACING = 14  # Space between dots
-TYPING_TEXT_OFFSET = 20  # Space between text and dots
-TYPING_ANIMATION_FRAMES = 3  # Number of animation frames
+# Typing indicator constants (same as in generate_chat.py)
 TYPING_FRAME_DURATION = 0.3  # Duration per frame in seconds
+TYPING_ANIMATION_FRAMES = 3  # Number of animation frames
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
 def add_sounds(filename):
-    # Load the video file
     video = VideoFileClip("output.mp4")
     duration = 0
     audio_clips = []
@@ -37,10 +32,13 @@ def add_sounds(filename):
                     duration += float(line.split('$^')[1])
             elif name_up_next:
                 name_up_next = False
+                # Add typing sound if available
                 typing_sound = f'{base_dir}/{os.pardir}/assets/sounds/mp3/typing.mp3'
                 if os.path.exists(typing_sound):
-                    audio_clips.append(AudioFileClip(typing_sound).set_start(duration))
-                    duration += TYPING_FRAME_DURATION * TYPING_ANIMATION_FRAMES
+                    audio_clips.append(
+                        AudioFileClip(typing_sound).set_start(duration)
+                    )
+                duration += TYPING_FRAME_DURATION * TYPING_ANIMATION_FRAMES
                 continue
             else:
                 if "#!" in line:
@@ -56,8 +54,6 @@ def add_sounds(filename):
     if len(audio_clips) > 0:
         composite_audio = CompositeAudioClip(audio_clips)
         video = video.set_audio(composite_audio)
-    else:
-        pass
 
     video.write_videofile(f'{base_dir}/{os.pardir}/final_video.mp4', codec="libx264", audio_codec="aac")
     os.remove("output.mp4")

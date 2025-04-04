@@ -3,20 +3,15 @@ from sound_effects import add_sounds
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Typing indicator constants
-TYPING_HEIGHT = 100  # Same as joined message height
-TYPING_DOT_COLOR = (142, 146, 151)  # Discord's exact dot color
-TYPING_DOT_SIZE = 8  # Dot diameter
-TYPING_DOT_SPACING = 14  # Space between dots
-TYPING_TEXT_OFFSET = 20  # Space between text and dots
-TYPING_ANIMATION_FRAMES = 3  # Number of animation frames
+# Typing indicator constants (same as in generate_chat.py)
 TYPING_FRAME_DURATION = 0.3  # Duration per frame in seconds
+TYPING_ANIMATION_FRAMES = 3  # Number of animation frames
 
 def gen_vid(filename):
     input_folder = f'{base_dir}/{os.pardir}/chat/'
     image_files = sorted([f for f in os.listdir(input_folder) if f.endswith('.png')])
 
-    # Read durations from the file.
+    # Read durations from the file
     durations = []
     with open(filename, encoding="utf8") as f:
         name_up_next = True
@@ -36,6 +31,7 @@ def gen_vid(filename):
                 continue
             elif name_up_next == True:
                 name_up_next = False
+                # Add durations for typing animation frames
                 durations.extend([str(TYPING_FRAME_DURATION)] * TYPING_ANIMATION_FRAMES)
                 continue
             else:
@@ -44,8 +40,7 @@ def gen_vid(filename):
                 else:
                     durations.append(line.split('$^')[1])
                 
-                
-    # Create a text file to store the image paths
+    # Create image paths file
     with open('image_paths.txt', 'w') as file:    
         count = 0
         for image_file in image_files:

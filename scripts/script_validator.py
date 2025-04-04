@@ -30,24 +30,25 @@ def validate_script_lines(lines):
       - If a sound marker is present, the referenced sound file (/assets/sounds/mp3/<sound>.mp3) must exist.
     """
     errors = []
-    state = "waiting_for_name"
+    state = "waiting_for_name"  # or "collecting_messages"
     for idx, raw_line in enumerate(lines, start=1):
         line = raw_line.strip()
-        if line == "": continue
-        if line.startswith("#"): continue
-        if line.startswith("WELCOME "): continue
+        if line == "":
+            state = "waiting_for_name"
+            continue
+        if line.startswith("#"):
+            continue
+        if line.startswith("WELCOME "):
+            continue
 
         if state == "waiting_for_name":
+            # Expect a name line like "Name: rest-of-line"
             if ":" not in line:
-                errors.append(f"Line {idx}: Missing colon in name line: {line}")
-                continue
-                
-            name_part = line.split(":", 1)[0].strip().lstrip('@')
-            if not name_part:
-                errors.append(f"Line {idx}: Empty character name before colon")
-            elif name_part not in characters_dict:
-                errors.append(f"Line {idx}: Character '{name_part}' not registered in characters.json")
-            
+                errors.append(f"Line {idx}: Expected a name line containing ':' but got: {line}")
+            else:
+                name_part = line.split(":", 1)[0].strip()
+                if not name_part:
+                    errors.append(f"Line {idx}: Name part before ':' is empty.")
             state = "collecting_messages"
         else:
             # In message lines we expect the '$^' delimiter.
