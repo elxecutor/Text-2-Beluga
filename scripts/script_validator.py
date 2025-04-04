@@ -17,24 +17,16 @@ def get_filename():
     return filename
 
 def validate_script_lines(lines):
-    """
-    Validate the script lines.
-    
-    Expected structure:
-      - An empty line: resets the block state.
-      - Lines starting with '#' are comments and are skipped.
-      - Lines starting with "WELCOME " are treated as joined messages.
-      - The first non-empty, non-comment, non-WELCOME line in a block should be a name line (must contain a colon).
-      - Subsequent lines in that block (chat messages) must contain the delimiter '$^' with a valid float duration,
-        optionally followed by a sound marker starting with "#!".
-      - If a sound marker is present, the referenced sound file (/assets/sounds/mp3/<sound>.mp3) must exist.
-    """
     errors = []
-    state = "waiting_for_name"  # or "collecting_messages"
+    state = "waiting_for_name"
+    current_name = None
+    typing_expected = False
+
     for idx, raw_line in enumerate(lines, start=1):
         line = raw_line.strip()
         if line == "":
             state = "waiting_for_name"
+            current_name = None
             continue
         if line.startswith("#"):
             continue
@@ -42,42 +34,54 @@ def validate_script_lines(lines):
             continue
 
         if state == "waiting_for_name":
-            # Expect a name line like "Name: rest-of-line"
-            if ":" not in line:
-                errors.append(f"Line {idx}: Expected a name line containing ':' but got: {line}")
+            if ':' not in line:
+                errors.append(f"Line {idx}: Expected name line with ':'")
             else:
-                name_part = line.split(":", 1)[0].strip()
-                if not name_part:
-                    errors.append(f"Line {idx}: Name part before ':' is empty.")
-            state = "collecting_messages"
-        else:
-            # In message lines we expect the '$^' delimiter.
-            if "$^" not in line:
-                errors.append(f"Line {idx}: Expected '$^' delimiter in message line but got: {line}")
-            else:
-                parts = line.split("$^", 1)
-                # The second part should start with a valid duration.
-                duration_part = parts[1].strip()
-                if duration_part == "":
-                    errors.append(f"Line {idx}: Missing duration information after '$^'.")
+                # Check for typing toggle syntax
+                if '^:' in line:
+                    if line.count('^:') != 1:
+                        errors.append(f"Line {idx}: Invalid typing toggle syntax")
+                    current_name = line.split('^:', 1)[0].strip()
+                    typing_expected = True
                 else:
-                    # Check if a sound marker is included.
-                    if "#!" in duration_part:
-                        dur_str, sound_marker = duration_part.split("#!", 1)
-                        dur_str = dur_str.strip()
-                        sound_name = sound_marker.strip()
-                        # Check that the sound effect file exists.
-                        sound_path = os.path.join(base_dir, os.pardir, "assets", "sounds", "mp3", f"{sound_name}.mp3")
-                        if not os.path.isfile(sound_path):
-                            errors.append(f"Line {idx}: Sound effect '{sound_name}' does not exist at expected location: {sound_path}")
-                    else:
-                        dur_str = duration_part
-                    try:
-                        float(dur_str)
-                    except ValueError:
-                        errors.append(f"Line {idx}: Unable to convert duration '{dur_str}' to a number.")
-    return errors
+                    current_name = line.split(':', 1)[0].strip()
+                    typing_expected = False
+                
+                if not current_name:
+                    errors.append(f"Line {idx}: Empty character name")
+                elif current_name not in characters_dict:
+                    errors.append(f"Line {idx}: Character '{current_name}' not found")
+                
+                state = "expecting_message"
+        elif state == "expecting_message":
+            if '$^' not in line:
+                errors.append(f"Line {idx}: Missing '$^' delimiter in message")
+            else:
+                # Validate duration and sound effect
+                parts = line.split('$^', 1)
+                duration_part = parts[1].strip()
+                
+                if '#!' in duration_part:
+                    dur_str, sound_marker = duration_part.split('#!', 1)
+                    dur_str = dur_str.strip()
+                    sound_name = sound_marker.strip()
+                    sound_path = os.path.join(
+                        base_dir, os.pardir, "assets", "sounds", "mp3", 
+                        f"{sound_name}.mp3"
+                    )
+                    if not os.path.isfile(sound_path):
+                        errors.append(f"Line {idx}: Sound '{sound_name}' not found")
+                else:
+                    dur_str = duration_part
+                
+                try:
+                    float(dur_str)
+                except ValueError:
+                    errors.append(f"Line {idx}: Invalid duration '{dur_str}'")
+                
+                state = "waiting_for_name"
 
+    return errors
 def main():
     parser = argparse.ArgumentParser(description="Validate a script text file for chat generation.")
     parser.add_argument("script_file", nargs="?", help="Path to the script text file. If not provided, a file dialog will open.")

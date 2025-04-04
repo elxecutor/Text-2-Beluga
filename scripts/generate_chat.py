@@ -323,21 +323,21 @@ def get_filename():
 
 def save_images(lines, init_time, dt=30):
     os.makedirs(f'{base_dir}/{os.pardir}/chat', exist_ok=True)
-
-    name_up_next = True
     current_time = init_time
     current_name = None
     current_lines = []
     msg_number = 1
     joined_messages = {}
     name_time = []
+    typing_enabled = True  # Default to enabled for backward compatibility
 
     for line in lines:
         if line == '':
-            name_up_next = True
+            current_name = None
             current_lines = []
             name_time = []
             joined_messages = {}
+            typing_enabled = True  # Reset to default for next block
             continue
 
         if line.startswith('#'):
@@ -355,48 +355,55 @@ def save_images(lines, init_time, dt=30):
         else:
             joined_messages = {}
 
-        if name_up_next:
-            if ':' not in line:
-                raise ValueError(f"Missing colon in name line: {line}")
-            
-            name_part = line.split(':', 1)[0].strip().lstrip('@')
-            if not name_part:
-                raise ValueError(f"Empty character name in line: {line}")
-                
-            if name_part not in characters_dict:
-                raise ValueError(f"Character '{name_part}' not found in characters.json (line: {line})")
+        if ':' in line:
+            # Check for typing toggle syntax
+            if '^:' in line:
+                current_name = line.split('^:', 1)[0].strip().lstrip('@')
+                typing_enabled = True
+            else:
+                current_name = line.split(':', 1)[0].strip().lstrip('@')
+                typing_enabled = False
 
-            current_name = name_part
+            if not current_name:
+                raise ValueError(f"Empty character name in line: {line}")
+            if current_name not in characters_dict:
+                raise ValueError(f"Character '{current_name}' not found in characters.json")
+
             hour = current_time.hour % 12 or 12
             name_time = [current_name, f'{hour}:{current_time.minute:02d}']
             
-            # Generate typing indicator
-            for frame in range(TYPING_ANIMATION_FRAMES):
-                typing_img = generate_typing_indicator(
-                    current_name,
-                    characters_dict[current_name]["role_color"],
-                    frame
+            # Generate typing indicator if enabled
+            if typing_enabled:
+                for frame in range(TYPING_ANIMATION_FRAMES):
+                    typing_img = generate_typing_indicator(
+                        current_name,
+                        characters_dict[current_name]["role_color"],
+                        frame
+                    )
+                    typing_img.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
+                    msg_number += 1
+                current_time += datetime.timedelta(
+                    seconds=TYPING_FRAME_DURATION * TYPING_ANIMATION_FRAMES
                 )
-                typing_img.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
-                msg_number += 1
-            
-            current_time += datetime.timedelta(
-                seconds=TYPING_FRAME_DURATION * TYPING_ANIMATION_FRAMES
-            )
-            name_up_next = False
             continue
 
-        current_lines.append(line.split('$^')[0])
-        image = generate_chat(
-            messages=current_lines,
-            name_time=name_time,
-            profpic_file=os.path.join(f'{base_dir}/{os.pardir}/assets/profile_pictures', characters_dict[current_name]["profile_pic"]),
-            color=characters_dict[current_name]["role_color"]
-        )
-        image.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
-        current_time += datetime.timedelta(seconds=dt)
-        msg_number += 1
-
+        # Process message line
+        if current_name and '$^' in line:
+            message = line.split('$^')[0].strip()
+            current_lines.append(message)
+            image = generate_chat(
+                messages=current_lines,
+                name_time=name_time,
+                profpic_file=os.path.join(
+                    f'{base_dir}/{os.pardir}/assets/profile_pictures', 
+                    characters_dict[current_name]["profile_pic"]
+                ),
+                color=characters_dict[current_name]["role_color"]
+            )
+            image.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
+            duration_part = line.split('$^')[1].split('#!')[0] if '#!' in line else line.split('$^')[1]
+            current_time += datetime.timedelta(seconds=float(duration_part))
+            msg_number += 1
 
 if __name__ == '__main__':
     """
