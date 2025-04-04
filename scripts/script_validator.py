@@ -74,7 +74,10 @@ def validate_script_lines(lines):
                 state = "expecting_messages" if not has_typing_indicator else "waiting_for_block"
                 
         elif state == "expecting_messages":
-            if '$^' not in line:
+            if '$embed(' in line:
+                if not re.match(r'.*?\$embed\(#?[0-9a-fA-F]{6},\s*.+,\s*.+\)', line):
+                    errors.append(f"Line {idx}: Invalid embed format. Expected: $embed(#HEXCOLOR,Title,Description)")
+            elif '$^' not in line:
                 errors.append(f"Line {idx}: Missing duration separator '$^'")
             else:
                 # Validate message duration format

@@ -8,6 +8,7 @@ import json
 import random
 import regex
 import re
+import textwrap
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QFileDialog
@@ -95,6 +96,12 @@ STATUS_TEXTS = {
 }
 STATUS_SIZE = 20  # Diameter of status indicator
 STATUS_BORDER = 3  # White border width
+# Add to constants section
+EMBED_COLOR_BAR_WIDTH = 5
+EMBED_WIDTH = 500
+EMBED_PADDING = 15
+EMBED_TITLE_FONT_SIZE = 40
+EMBED_DESC_FONT_SIZE = 35
 
 # Load fonts and character data
 font = "whitney"
@@ -110,6 +117,48 @@ message_mention_italic_font = ImageFont.truetype(os.path.join(font_dir, 'semibol
 
 with open(f'{base_dir}/{os.pardir}/assets/profile_pictures/characters.json', encoding="utf8") as file:
     characters_dict = json.load(file)
+
+def generate_embed(title, description, color_rgb):
+    """Creates Discord-style rich embed"""
+    title_font = ImageFont.truetype(os.path.join(font_dir, 'semibold.ttf'), EMBED_TITLE_FONT_SIZE)
+    desc_font = ImageFont.truetype(os.path.join(font_dir, 'medium.ttf'), EMBED_DESC_FONT_SIZE)
+    
+    # Calculate text heights
+    title_height = title_font.getbbox(title)[3]
+    wrapped_desc = textwrap.wrap(description, width=45)
+    desc_height = sum(desc_font.getbbox(line)[3] + 5 for line in wrapped_desc)
+    
+    total_height = EMBED_PADDING*2 + title_height + desc_height
+    
+    embed = Image.new('RGBA', (EMBED_WIDTH, total_height), (47, 49, 54))
+    draw = ImageDraw.Draw(embed)
+    
+    # Color bar
+    draw.rectangle(
+        [(0, 0), (EMBED_COLOR_BAR_WIDTH, total_height)],
+        fill=color_rgb
+    )
+    
+    # Title
+    draw.text(
+        (EMBED_PADDING + EMBED_COLOR_BAR_WIDTH, EMBED_PADDING),
+        title,
+        (255, 255, 255),
+        font=title_font
+    )
+    
+    # Description
+    y = EMBED_PADDING + title_height + 10
+    for line in wrapped_desc:
+        draw.text(
+            (EMBED_PADDING + EMBED_COLOR_BAR_WIDTH, y),
+            line,
+            (200, 200, 200),
+            font=desc_font
+        )
+        y += desc_font.getbbox(line)[3] + 5
+    
+    return embed
 
 def generate_status_message(name, time, status, arrow_x, color=NAME_FONT_COLOR):
     """Generates a status change message with colored indicator"""
@@ -247,11 +296,25 @@ def generate_chat(messages, name_time, profpic_file, color, current_status):
     draw_template.text(time_position, time_text, TIME_FONT_COLOR, font=time_font)
 
     y_offset = 0
+    embed = None
     for i, message in enumerate(messages):
         message = message.strip()
         if not message:
             continue
 
+        if '$embed(' in message:
+            parts = message.split('$embed(')
+            message_text = parts[0].strip()
+            embed_params = parts[1].split(')', 1)[0].split(',')
+            
+            color_hex = embed_params[0].strip().lstrip('#')
+            color_rgb = tuple(int(color_hex[i:i+2], 16) for i in (0, 2, 4))
+            title = embed_params[1].strip() if len(embed_params) > 1 else ""
+            description = embed_params[2].strip() if len(embed_params) > 2 else ""
+            
+            embed = generate_embed(title, description, color_rgb)
+            message = message_text
+        
         x, base_y = MESSAGE_POSITIONS[i]
         y_pos = base_y + y_offset
         current_x = x
@@ -336,6 +399,13 @@ def generate_chat(messages, name_time, profpic_file, color, current_status):
                                 )
                             
                             current_x += font_used.getbbox(part)[2] - font_used.getbbox(part)[0]
+    if embed:
+        total_height = template.height + embed.height + 20
+        combined = Image.new('RGBA', (WORLD_WIDTH, total_height), WORLD_COLOR)
+        combined.paste(template, (0, 0))
+        combined.paste(embed, (MESSAGE_X - 20, template.height + 10))
+        return combined
+
     return template
 
 

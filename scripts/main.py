@@ -215,6 +215,8 @@ def formatting(stdscr, current_row, left_margin):
         "- Message text enclosed within ~~ and ~~ will be shown with strikethrough.",
         "- Emojis are supported in messages.",
         "- Different characters can be mentioned in a message by writing \"@\" followed by a character's name.",
+        "- Add rich embeds using: $embed(#HEXCOLOR,Title,Description)",
+        "  Example: Check this $embed(#3498db,Important Docs,Read carefully!)",
         "",
         "- An example script has been provided to give an idea and get you started.",
         "",
