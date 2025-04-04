@@ -11,7 +11,9 @@
 ----------------------------------------------------
 
 # (TRY) TODO
-- ability to add background music
+- Edited messages?
+- how do i use : in the messages?
+- ability to add background music? Been thinking using eternal editors to add
 - AI powered chat script creator
 - support for links (URLs)
 - Text2Beluga discord bot
