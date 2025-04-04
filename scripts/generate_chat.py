@@ -87,6 +87,12 @@ STATUS_INDICATORS = {
     'dnd': (240, 71, 71),        # Red
     'offline': (116, 127, 141)   # Gray
 }
+STATUS_TEXTS = {
+    'online': "CHARACTER is now online",
+    'idle': "CHARACTER is now idle",
+    'dnd': "CHARACTER is now in Do Not Disturb mode",
+    'offline': "CHARACTER went offline"
+}
 STATUS_SIZE = 20  # Diameter of status indicator
 STATUS_BORDER = 3  # White border width
 
@@ -104,6 +110,32 @@ message_mention_italic_font = ImageFont.truetype(os.path.join(font_dir, 'semibol
 
 with open(f'{base_dir}/{os.pardir}/assets/profile_pictures/characters.json', encoding="utf8") as file:
     characters_dict = json.load(file)
+
+def generate_status_message(name, time, status, arrow_x, color=NAME_FONT_COLOR):
+    """Generates a status change message with colored indicator"""
+    template_img = Image.new('RGBA', (WORLD_WIDTH, WORLD_HEIGHT_JOINED), WORLD_COLOR)
+    draw_template = ImageDraw.Draw(template_img)
+    
+    # Status indicator circle
+    status_size = 20
+    draw_template.ellipse(
+        [arrow_x, 40, arrow_x + status_size, 40 + status_size],
+        fill=STATUS_INDICATORS[status]
+    )
+    
+    # Message text
+    text = STATUS_TEXTS[status].replace("CHARACTER", name)
+    text_x = arrow_x + status_size + 20
+    text_y = (WORLD_HEIGHT_JOINED - name_font.getbbox(text)[3]) // 2
+    
+    draw_template.text((text_x, text_y), text, color, font=name_font)
+    
+    # Time text
+    time_text = f'Today at {time} PM'
+    time_x = WORLD_WIDTH - 300
+    draw_template.text((time_x, text_y), time_text, TIME_FONT_COLOR, font=time_font)
+    
+    return template_img
 
 def generate_typing_indicator(name, color, frame=0):
     """Generates animated typing indicator with bouncing dots"""
@@ -143,7 +175,7 @@ def is_emoji_message(message):
     """Return True if the message contains only emoji characters."""
     return bool(message) and all(regex.match(r'^\p{Emoji}+$', char) for char in message.strip())
 
-def generate_chat(messages, name_time, profpic_file, color):
+def generate_chat(messages, name_time, profpic_file, color, current_status):
     """
     Generates a chat image given the list of messages, name & time info,
     profile picture file, and a role color.
@@ -159,6 +191,9 @@ def generate_chat(messages, name_time, profpic_file, color):
         NAME_POSITION[0] + name_font.getbbox(name_text)[2] + NAME_TIME_SPACING,
         baseline_y - time_ascent
     )
+
+    character_name = name_time[0]
+    status_color = STATUS_INDICATORS[current_status.get(character_name, "online")]
     
     prof_pic = Image.open(profpic_file)
     prof_pic.thumbnail((sys.maxsize, PROFPIC_WIDTH), Image.LANCZOS)
@@ -427,8 +462,35 @@ def save_images(lines, init_time, dt=30):
     joined_messages = {}
     name_time = []
     typing_enabled = True  # Default to enabled for backward compatibility
+    current_status = {name: data.get("status", "online") for name, data in characters_dict.items()}
 
     for line in lines:
+        if line.startswith("STATUS "):
+            try:
+                parts = line.split('$^')
+                status_parts = parts[0].split()
+                _, character, new_status = status_parts
+                duration = parts[1].split('#!')[0] if '#!' in parts[1] else parts[1]
+                
+                # Generate status message image
+                hour = current_time.hour % 12 or 12
+                status_img = generate_status_message(
+                    character,
+                    f"{hour}:{current_time.minute:02d}",
+                    new_status,
+                    random.randint(50, 80),
+                    characters_dict[character]["role_color"]
+                )
+                status_img.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
+                
+                current_time += datetime.timedelta(seconds=float(duration))
+                msg_number += 1
+                current_status[character] = new_status
+                continue
+            except Exception as e:
+                print(f"Error processing STATUS: {e}")
+                continue
+
         if line == '':
             current_name = None
             current_lines = []
@@ -503,12 +565,24 @@ def save_images(lines, init_time, dt=30):
                     f'{base_dir}/{os.pardir}/assets/profile_pictures', 
                     characters_dict[current_name]["profile_pic"]
                 ),
-                color=characters_dict[current_name]["role_color"]
+                color=characters_dict[current_name]["role_color"],
+                current_status=current_status  # Add this parameter
             )
             image.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
             duration_part = line.split('$^')[1].split('#!')[0] if '#!' in line else line.split('$^')[1]
             current_time += datetime.timedelta(seconds=float(duration_part))
             msg_number += 1
+
+        image = generate_chat(
+            messages=current_lines,
+            name_time=name_time,
+            profpic_file=os.path.join(
+                f'{base_dir}/{os.pardir}/assets/profile_pictures', 
+                characters_dict[current_name]["profile_pic"]
+            ),
+            color=characters_dict[current_name]["role_color"],
+            current_status=current_status  # Add this parameter
+        )
 
 if __name__ == '__main__':
     """

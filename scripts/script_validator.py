@@ -23,22 +23,24 @@ def get_filename():
 
 def validate_script_lines(lines):
     errors = []
+    valid_statuses = ['online', 'idle', 'dnd', 'offline']
     state = "waiting_for_block"
     current_character = None
     has_typing_indicator = False
 
     for idx, raw_line in enumerate(lines, start=1):
         line = raw_line.strip()
-        valid_statuses = ['online', 'idle', 'dnd', 'offline']
 
         if line.startswith("STATUS "):
             parts = line.split()
             if len(parts) != 3:
-                errors.append(f"Line {idx}: Invalid STATUS command format")
-            elif parts[1] not in characters_dict:
-                errors.append(f"Line {idx}: Character '{parts[1]}' not found")
-            elif parts[2] not in valid_statuses:
-                errors.append(f"Line {idx}: Invalid status '{parts[2]}'")
+                errors.append(f"Line {idx}: Invalid STATUS format - should be 'STATUS [name] [status]'")
+                continue
+            _, character, status = parts
+            if character not in characters_dict:
+                errors.append(f"Line {idx}: Unknown character '{character}' in STATUS command")
+            if status not in valid_statuses:
+                errors.append(f"Line {idx}: Invalid status '{status}' in STATUS command")
             continue
         
         if line.startswith("WELCOME ") or line.startswith("LEAVE ") or line.startswith("#"):
