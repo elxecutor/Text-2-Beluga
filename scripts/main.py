@@ -203,6 +203,7 @@ def formatting(stdscr, current_row, left_margin):
         "  - Write the character's name followed by ^: for messages WITH typing indicator",
         "  - Example with typing:    Character^:",
         "  - Example without typing: Character:",
+        "- To display a \"character left\" message, the line should begin with LEAVE followed by the character name ~ [LEAVE CharacterName]",
         "- Each message should be (MANDATORILY) immediately followed by \"$^\" and a number that indicated for how many seconds that message should be shown.",
         "- Each duration can be (OPTIONALLY) immediately followed by \"#!\" and a sound effect name to play that sound in the video when that message is shown.",
         "- Each duration can be (OPTIONALLY) immediately followed by \"#!\" and a sound effect name to play that sound in the video when that message is shown.",

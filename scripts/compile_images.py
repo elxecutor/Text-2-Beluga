@@ -21,7 +21,7 @@ def gen_vid(filename):
                 continue
             if line.startswith('#'):
                 continue
-            if line.startswith("WELCOME"):
+            if line.startswith("WELCOME") or line.startswith("LEAVE"):  # Updated condition
                 durations.append(line.split('$^')[1].split('#!')[0] if '#!' in line else line.split('$^')[1])
                 continue
             if ':' in line:

@@ -39,6 +39,20 @@ JOINED_TEXTS = [
     "Good to see you, CHARACTER!",
     "Yay you made it, CHARACTER!",
 ]
+LEFT_FONT_SIZE = 45
+LEFT_FONT_COLOR = (157, 161, 164)
+LEFT_TEXTS = [
+    "CHARACTER left the party.",
+    "CHARACTER has departed.",
+    "CHARACTER vanished into the void.",
+    "CHARACTER went to get pizza...",
+    "CHARACTER disconnected.",
+    "CHARACTER logged off.",
+    "CHARACTER is no longer with us.",
+    "CHARACTER left the building.",
+    "CHARACTER exited stage left.",
+    "CHARACTER poofed out of existence.",
+]
 
 # Typing indicator constants
 TYPING_HEIGHT = 100
@@ -293,11 +307,47 @@ def generate_joined_message(name, time, template_str, arrow_x, color=NAME_FONT_C
     
     return template_img
 
+def generate_left_message(name, time, template_str, arrow_x, color=NAME_FONT_COLOR):
+    """Generates a Discord-like leave message with a white arrow"""
+    before_text, after_text = template_str.split("CHARACTER", 1) if "CHARACTER" in template_str else ("", "")
+    time_text = f'Today at {time} PM'
+    
+    template_img = Image.new(mode='RGBA', size=(WORLD_WIDTH, WORLD_HEIGHT_JOINED), color=WORLD_COLOR)
+    draw_template = ImageDraw.Draw(template_img)
+    
+    arrow = Image.open(f"{base_dir}/{os.pardir}/assets/arrow_leave.png")  # Different arrow
+    arrow.thumbnail((40, 40))
+    text_x = arrow_x + arrow.width + 60
 
-def generate_joined_message_stack(joined_messages, hour):
-    """
-    Generates a stacked image for multiple joined messages.
-    """
+    text_bbox = message_font.getbbox("Sample")
+    text_height = text_bbox[3] - text_bbox[1]
+    text_y = (WORLD_HEIGHT_JOINED - text_height) // 2
+    message_ascent, message_descent = message_font.getmetrics()
+    total_text_height = message_ascent + message_descent
+    arrow_y = text_y + (total_text_height - arrow.height) // 2
+
+    template_img.paste(arrow, (arrow_x, arrow_y), arrow)
+    
+    before_width = message_font.getbbox(before_text)[2] if before_text else 0
+    name_width = name_font.getbbox(name)[2]
+    with Pilmoji(template_img) as pilmoji:
+        if before_text:
+            pilmoji.text((text_x, text_y), before_text, JOINED_FONT_COLOR, font=message_font)
+        name_x = text_x + before_width
+        pilmoji.text((name_x, text_y), name, color, font=name_font)
+        if after_text:
+            after_x = name_x + name_width
+            pilmoji.text((after_x, text_y), after_text, JOINED_FONT_COLOR, font=message_font)
+        
+        total_msg_width = before_width + name_width + message_font.getbbox(after_text)[2]
+        time_x = text_x + total_msg_width + 30
+        time_baseline = text_y + message_ascent
+        time_y = time_baseline - time_font.getmetrics()[0]
+        pilmoji.text((time_x, time_y), time_text, TIME_FONT_COLOR, font=time_font)
+    
+    return template_img
+def generate_joined_message_stack(joined_messages, hour, is_leave=False):
+    """Generates stacked messages, now supporting leave messages"""
     total_height = WORLD_HEIGHT_JOINED * len(joined_messages)
     template_img = Image.new(mode='RGBA', size=(WORLD_WIDTH, total_height), color=WORLD_COLOR)
     
@@ -305,7 +355,14 @@ def generate_joined_message_stack(joined_messages, hour):
         name = key.split(' ')[1].split('$^')[0]
         color = characters_dict[name]["role_color"]
         time_str = f'{hour}:{joined_messages[key][2].minute:02d}'
-        joined_img = generate_joined_message(name, time_str, joined_messages[key][0], joined_messages[key][1], color)
+        
+        if is_leave:
+            joined_img = generate_left_message(name, time_str, joined_messages[key][0], 
+                                             joined_messages[key][1], color)
+        else:
+            joined_img = generate_joined_message(name, time_str, joined_messages[key][0], 
+                                              joined_messages[key][1], color)
+                                              
         template_img.paste(joined_img, (0, idx * WORLD_HEIGHT_JOINED))
     
     return template_img
@@ -347,7 +404,15 @@ def save_images(lines, init_time, dt=30):
         if line.startswith("WELCOME "):
             joined_messages[line] = [random.choice(JOINED_TEXTS), random.randint(50, 80), current_time]
             hour = current_time.hour % 12 or 12
-            image = generate_joined_message_stack(joined_messages, hour)
+            image = generate_joined_message_stack(joined_messages, hour, is_leave=False)
+            image.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
+            current_time += datetime.timedelta(seconds=dt)
+            msg_number += 1
+            continue
+        elif line.startswith("LEAVE "):  # New leave message handling
+            joined_messages[line] = [random.choice(LEFT_TEXTS), random.randint(50, 80), current_time]
+            hour = current_time.hour % 12 or 12
+            image = generate_joined_message_stack(joined_messages, hour, is_leave=True)
             image.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
             current_time += datetime.timedelta(seconds=dt)
             msg_number += 1

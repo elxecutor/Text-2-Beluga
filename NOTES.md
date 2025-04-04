@@ -8,6 +8,7 @@
 - write a README file
 - allow for strikethrough message text
 - "User is typing..." indicator
+- leave message
 
 ----------------------------------------------------
 

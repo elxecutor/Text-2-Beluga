@@ -21,7 +21,7 @@ def add_sounds(filename):
                 continue
             if line.startswith('#'):
                 continue
-            if line.startswith("WELCOME"):
+            if line.startswith("WELCOME") or line.startswith("LEAVE"):
                 if "#!" in line:
                     parts = line.split('$^')
                     duration_part, sound_part = parts[1].split("#!")

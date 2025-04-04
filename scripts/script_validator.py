@@ -30,7 +30,7 @@ def validate_script_lines(lines):
     for idx, raw_line in enumerate(lines, start=1):
         line = raw_line.strip()
         
-        if line.startswith("WELCOME ") or line.startswith("#"):
+        if line.startswith("WELCOME ") or line.startswith("LEAVE ") or line.startswith("#"):
             continue
             
         if line == "":
