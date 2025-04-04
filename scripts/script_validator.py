@@ -2,9 +2,14 @@ import os
 import sys
 import re
 import argparse
+import json
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load character data
+with open(f'{base_dir}/{os.pardir}/assets/profile_pictures/characters.json', encoding="utf8") as file:
+    characters_dict = json.load(file)
 
 def get_filename():
     """Opens a file dialog and returns the selected filename."""
@@ -18,70 +23,63 @@ def get_filename():
 
 def validate_script_lines(lines):
     errors = []
-    state = "waiting_for_name"
-    current_name = None
-    typing_expected = False
+    state = "waiting_for_block"
+    current_character = None
+    has_typing_indicator = False
 
     for idx, raw_line in enumerate(lines, start=1):
         line = raw_line.strip()
+        
+        if line.startswith("WELCOME ") or line.startswith("#"):
+            continue
+            
         if line == "":
-            state = "waiting_for_name"
-            current_name = None
-            continue
-        if line.startswith("#"):
-            continue
-        if line.startswith("WELCOME "):
+            # Only validate empty blocks if they had a typing indicator without messages
+            if state == "expecting_messages" and not has_typing_indicator:
+                errors.append(f"Line {idx-1}: Empty message block for {current_character}")
+            state = "waiting_for_block"
+            current_character = None
+            has_typing_indicator = False
             continue
 
-        if state == "waiting_for_name":
-            if ':' not in line:
-                errors.append(f"Line {idx}: Expected name line with ':'")
-            else:
-                # Check for typing toggle syntax
+        if state == "waiting_for_block":
+            if ':' in line:
+                # Character declaration line
                 if '^:' in line:
-                    if line.count('^:') != 1:
-                        errors.append(f"Line {idx}: Invalid typing toggle syntax")
-                    current_name = line.split('^:', 1)[0].strip()
-                    typing_expected = True
+                    has_typing_indicator = True
+                    name_part = line.split('^:', 1)[0].strip()
                 else:
-                    current_name = line.split(':', 1)[0].strip()
-                    typing_expected = False
+                    has_typing_indicator = False
+                    name_part = line.split(':', 1)[0].strip()
+
+                if not name_part:
+                    errors.append(f"Line {idx}: Missing character name")
+                elif name_part not in characters_dict:
+                    errors.append(f"Line {idx}: Character '{name_part}' not found")
                 
-                if not current_name:
-                    errors.append(f"Line {idx}: Empty character name")
-                elif current_name not in characters_dict:
-                    errors.append(f"Line {idx}: Character '{current_name}' not found")
+                current_character = name_part
+                state = "expecting_messages" if not has_typing_indicator else "waiting_for_block"
                 
-                state = "expecting_message"
-        elif state == "expecting_message":
+        elif state == "expecting_messages":
             if '$^' not in line:
-                errors.append(f"Line {idx}: Missing '$^' delimiter in message")
+                errors.append(f"Line {idx}: Missing duration separator '$^'")
             else:
-                # Validate duration and sound effect
-                parts = line.split('$^', 1)
-                duration_part = parts[1].strip()
-                
-                if '#!' in duration_part:
-                    dur_str, sound_marker = duration_part.split('#!', 1)
-                    dur_str = dur_str.strip()
-                    sound_name = sound_marker.strip()
-                    sound_path = os.path.join(
-                        base_dir, os.pardir, "assets", "sounds", "mp3", 
-                        f"{sound_name}.mp3"
-                    )
-                    if not os.path.isfile(sound_path):
-                        errors.append(f"Line {idx}: Sound '{sound_name}' not found")
-                else:
-                    dur_str = duration_part
-                
+                # Validate message duration format
+                duration_part = line.split('$^', 1)[1].split('#!')[0].strip()
                 try:
-                    float(dur_str)
+                    float(duration_part)
                 except ValueError:
-                    errors.append(f"Line {idx}: Invalid duration '{dur_str}'")
+                    errors.append(f"Line {idx}: Invalid duration format '{duration_part}'")
                 
-                state = "waiting_for_name"
+            state = "waiting_for_block"
+
+    # Final validation for last block
+    if state == "expecting_messages" and not has_typing_indicator:
+        errors.append(f"Unterminated message block for {current_character} at end of file")
 
     return errors
+
+
 def main():
     parser = argparse.ArgumentParser(description="Validate a script text file for chat generation.")
     parser.add_argument("script_file", nargs="?", help="Path to the script text file. If not provided, a file dialog will open.")
