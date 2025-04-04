@@ -39,6 +39,7 @@ JOINED_TEXTS = [
     "Glad you're here, CHARACTER!",
     "Good to see you, CHARACTER!",
     "Yay you made it, CHARACTER!",
+    "[BOT] CHARACTER has connected to the admin panel.",
 ]
 LEFT_FONT_SIZE = 45
 LEFT_FONT_COLOR = (157, 161, 164)
@@ -230,6 +231,8 @@ def generate_chat(messages, name_time, profpic_file, color, current_status):
     profile picture file, and a role color.
     """
     name_text = name_time[0]
+    if name_text == "Bot":
+        name_text += " [BOT]"
     time_text = f'Today at {name_time[1]} PM'
     
     # Calculate baseline-aligned time position
@@ -367,7 +370,12 @@ def generate_chat(messages, name_time, profpic_file, color, current_status):
                                 current_x + text_width + 2 * padding,
                                 y_pos + text_bottom + padding
                             ]
-                            draw_template.rounded_rectangle(bg_box, fill=(74, 75, 114), radius=10)
+                            # In the message rendering section (mentions handling):
+                            if "Bot" in part:
+                                bg_color = (47, 49, 54)  # Discord embed background
+                            else:
+                                bg_color = (74, 75, 114)
+                            draw_template.rounded_rectangle(bg_box, fill=bg_color, radius=10)
                             pilmoji.text((current_x + padding, y_pos), part, (201, 205, 251), font=font_used)
                             current_x += text_width + 2 * padding
                         else:
@@ -420,7 +428,11 @@ def generate_joined_message(name, time, template_str, arrow_x, color=NAME_FONT_C
     template_img = Image.new(mode='RGBA', size=(WORLD_WIDTH, WORLD_HEIGHT_JOINED), color=WORLD_COLOR)
     draw_template = ImageDraw.Draw(template_img)
     
-    arrow = Image.open(f"{base_dir}/{os.pardir}/assets/arrow_join.png")
+    # Inside generate_joined_message(...):
+    if name == "Bot":
+        arrow = Image.open(f"{base_dir}/{os.pardir}/assets/shield_icon.png")
+    else:
+        arrow = Image.open(f"{base_dir}/{os.pardir}/assets/arrow_join.png")
     arrow.thumbnail((40, 40))
     text_x = arrow_x + arrow.width + 60
 
@@ -532,6 +544,8 @@ def save_images(lines, init_time, dt=30):
     joined_messages = {}
     name_time = []
     typing_enabled = True  # Default to enabled for backward compatibility
+    if current_name == "Bot":
+        typing_enabled = False  # Bots don't show typing
     current_status = {name: data.get("status", "online") for name, data in characters_dict.items()}
 
     for line in lines:
