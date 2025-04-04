@@ -14,6 +14,7 @@
 
 # (TRY) TODO
 - Edited messages?
+- system message
 - how do i use : in the messages?
 - ability to add background music? Been thinking using eternal editors to add
 - AI powered chat script creator

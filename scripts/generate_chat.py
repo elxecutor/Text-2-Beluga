@@ -80,6 +80,16 @@ MESSAGE_Y_INIT = 115
 MESSAGE_DY = 70
 MESSAGE_POSITIONS = [(MESSAGE_X, MESSAGE_Y_INIT + i * MESSAGE_DY) for i in range(5)]
 
+# Add to constants section
+STATUS_INDICATORS = {
+    'online': (67, 181, 129),    # Green
+    'idle': (250, 168, 26),      # Yellow
+    'dnd': (240, 71, 71),        # Red
+    'offline': (116, 127, 141)   # Gray
+}
+STATUS_SIZE = 20  # Diameter of status indicator
+STATUS_BORDER = 3  # White border width
+
 # Load fonts and character data
 font = "whitney"
 font_dir = os.path.join(base_dir, os.pardir, "assets", "fonts", font)
@@ -150,7 +160,6 @@ def generate_chat(messages, name_time, profpic_file, color):
         baseline_y - time_ascent
     )
     
-    # Open and process profile picture
     prof_pic = Image.open(profpic_file)
     prof_pic.thumbnail((sys.maxsize, PROFPIC_WIDTH), Image.LANCZOS)
     mask = Image.new("L", prof_pic.size, 0)
@@ -168,6 +177,37 @@ def generate_chat(messages, name_time, profpic_file, color):
     template.paste(prof_pic, PROFPIC_POSITION, mask)
     draw_template = ImageDraw.Draw(template)
     
+    status_color = STATUS_INDICATORS[characters_dict[name_text].get("status", "online")]
+    
+    # Draw white background circle first for border effect
+    # Calculate status position (centered in bottom-right of profile pic)
+    status_radius = STATUS_SIZE // 2
+    border_offset = STATUS_BORDER // 2
+    
+    # Center coordinates for both circles
+    center_x = PROFPIC_POSITION[0] + PROFPIC_WIDTH - status_radius - 5
+    center_y = PROFPIC_POSITION[1] + PROFPIC_WIDTH - status_radius - 5
+    
+    # Draw white border circle (slightly larger)
+    border_radius = status_radius + STATUS_BORDER
+    draw_template.ellipse(
+        [
+            (center_x - border_radius, center_y - border_radius),
+            (center_x + border_radius, center_y + border_radius)
+        ],
+        fill=(255, 255, 255)  # White
+    )
+    
+    # Draw status circle (perfectly centered within border)
+    draw_template.ellipse(
+        [
+            (center_x - status_radius, center_y - status_radius),
+            (center_x + status_radius, center_y + status_radius)
+        ],
+        fill=status_color
+    )
+
+    # Rest of the drawing operations...
     draw_template.text(NAME_POSITION, name_text, color, font=name_font)
     draw_template.text(time_position, time_text, TIME_FONT_COLOR, font=time_font)
 

@@ -29,6 +29,17 @@ def validate_script_lines(lines):
 
     for idx, raw_line in enumerate(lines, start=1):
         line = raw_line.strip()
+        valid_statuses = ['online', 'idle', 'dnd', 'offline']
+
+        if line.startswith("STATUS "):
+            parts = line.split()
+            if len(parts) != 3:
+                errors.append(f"Line {idx}: Invalid STATUS command format")
+            elif parts[1] not in characters_dict:
+                errors.append(f"Line {idx}: Character '{parts[1]}' not found")
+            elif parts[2] not in valid_statuses:
+                errors.append(f"Line {idx}: Invalid status '{parts[2]}'")
+            continue
         
         if line.startswith("WELCOME ") or line.startswith("LEAVE ") or line.startswith("#"):
             continue
