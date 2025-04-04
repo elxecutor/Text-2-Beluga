@@ -261,7 +261,7 @@ def generate_joined_message(name, time, template_str, arrow_x, color=NAME_FONT_C
     template_img = Image.new(mode='RGBA', size=(WORLD_WIDTH, WORLD_HEIGHT_JOINED), color=WORLD_COLOR)
     draw_template = ImageDraw.Draw(template_img)
     
-    arrow = Image.open(f"{base_dir}/{os.pardir}/assets/green_arrow.png")
+    arrow = Image.open(f"{base_dir}/{os.pardir}/assets/arrow_join.png")
     arrow.thumbnail((40, 40))
     text_x = arrow_x + arrow.width + 60
 
