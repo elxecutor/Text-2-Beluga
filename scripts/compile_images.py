@@ -3,6 +3,15 @@ from sound_effects import add_sounds
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
+# Typing indicator constants
+TYPING_HEIGHT = 100  # Same as joined message height
+TYPING_DOT_COLOR = (142, 146, 151)  # Discord's exact dot color
+TYPING_DOT_SIZE = 8  # Dot diameter
+TYPING_DOT_SPACING = 14  # Space between dots
+TYPING_TEXT_OFFSET = 20  # Space between text and dots
+TYPING_ANIMATION_FRAMES = 3  # Number of animation frames
+TYPING_FRAME_DURATION = 0.3  # Duration per frame in seconds
+
 def gen_vid(filename):
     input_folder = f'{base_dir}/{os.pardir}/chat/'
     image_files = sorted([f for f in os.listdir(input_folder) if f.endswith('.png')])
@@ -27,6 +36,7 @@ def gen_vid(filename):
                 continue
             elif name_up_next == True:
                 name_up_next = False
+                durations.extend([str(TYPING_FRAME_DURATION)] * TYPING_ANIMATION_FRAMES)
                 continue
             else:
                 if "#!" in line:

@@ -16,6 +16,14 @@ from PyQt5.QtWidgets import QFileDialog
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # CONSTANTS
+# Typing indicator constants
+TYPING_HEIGHT = 100  # Same as joined message height
+TYPING_DOT_COLOR = (142, 146, 151)  # Discord's exact dot color
+TYPING_DOT_SIZE = 8  # Dot diameter
+TYPING_DOT_SPACING = 14  # Space between dots
+TYPING_TEXT_OFFSET = 20  # Space between text and dots
+TYPING_ANIMATION_FRAMES = 3  # Number of animation frames
+TYPING_FRAME_DURATION = 0.3  # Duration per frame in seconds
 WORLD_WIDTH = 1777
 WORLD_Y_INIT_MESSAGE = 231
 WORLD_DY = 70
@@ -79,6 +87,38 @@ def is_emoji_message(message):
     """Return True if the message contains only emoji characters."""
     return bool(message) and all(regex.match(r'^\p{Emoji}+$', char) for char in message.strip())
 
+def generate_typing_indicator(name, color, frame=0):
+    """Generates animated typing indicator with bouncing dots"""
+    template = Image.new('RGBA', (WORLD_WIDTH, TYPING_HEIGHT), WORLD_COLOR)
+    draw = ImageDraw.Draw(template)
+    
+    # Draw name and "is typing" text
+    text = f"{name} is typing"
+    text_x = NAME_POSITION[0]
+    text_y = (TYPING_HEIGHT - name_font.getbbox(text)[3]) // 2
+    draw.text((text_x, text_y), text, color, font=name_font)
+    
+    # Calculate dots position
+    text_width = name_font.getbbox(text)[2]
+    dots_x = text_x + text_width + TYPING_TEXT_OFFSET
+    dots_y = text_y + name_font.getbbox(text)[3] // 2
+    
+    # Dot animation positions (middle dot bounces)
+    dot_offsets = [0, 3 - abs(frame - 1), 0]  # [0, 2, 0] for frame 1
+    
+    # Draw three animated dots
+    for i in range(3):
+        dot_position = (
+            dots_x + i * (TYPING_DOT_SIZE + TYPING_DOT_SPACING),
+            dots_y - dot_offsets[i]
+        )
+        draw.ellipse(
+            [dot_position, (dot_position[0] + TYPING_DOT_SIZE, 
+                          dot_position[1] + TYPING_DOT_SIZE)],
+            fill=TYPING_DOT_COLOR
+        )
+    
+    return template
 
 def generate_chat(messages, name_time, profpic_file, color):
     """
@@ -312,6 +352,38 @@ def save_images(lines, init_time, dt=30):
             image.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
             current_time += datetime.timedelta(seconds=dt)
             msg_number += 1
+            continue
+
+        if name_up_next:
+            # Extract and validate name
+            if ':' not in line:
+                raise ValueError(f"Missing colon in name line: {line}")
+            
+            name_part = line.split(':', 1)[0].strip().lstrip('@')
+            if not name_part:
+                raise ValueError(f"Empty character name in line: {line}")
+                
+            if name_part not in characters_dict:
+                raise ValueError(f"Character '{name_part}' not found in characters.json (line: {line})")
+
+            current_name = name_part
+            hour = current_time.hour % 12 or 12
+            name_time = [current_name, f'{hour}:{current_time.minute:02d}']
+            
+            # Generate typing indicator
+            for frame in range(TYPING_ANIMATION_FRAMES):
+                typing_img = generate_typing_indicator(
+                    current_name,
+                    characters_dict[current_name]["role_color"],
+                    frame
+                )
+                typing_img.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
+                msg_number += 1
+            
+            current_time += datetime.timedelta(
+                seconds=TYPING_FRAME_DURATION * TYPING_ANIMATION_FRAMES
+            )
+            name_up_next = False
             continue
         else:
             joined_messages = {}

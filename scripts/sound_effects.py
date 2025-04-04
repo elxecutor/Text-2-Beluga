@@ -2,6 +2,14 @@ import os
 from moviepy.editor import VideoFileClip, AudioFileClip, CompositeAudioClip
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
+# Typing indicator constants
+TYPING_HEIGHT = 100  # Same as joined message height
+TYPING_DOT_COLOR = (142, 146, 151)  # Discord's exact dot color
+TYPING_DOT_SIZE = 8  # Dot diameter
+TYPING_DOT_SPACING = 14  # Space between dots
+TYPING_TEXT_OFFSET = 20  # Space between text and dots
+TYPING_ANIMATION_FRAMES = 3  # Number of animation frames
+TYPING_FRAME_DURATION = 0.3  # Duration per frame in seconds
 
 def add_sounds(filename):
     # Load the video file
@@ -29,6 +37,10 @@ def add_sounds(filename):
                     duration += float(line.split('$^')[1])
             elif name_up_next:
                 name_up_next = False
+                typing_sound = f'{base_dir}/{os.pardir}/assets/sounds/mp3/typing.mp3'
+                if os.path.exists(typing_sound):
+                    audio_clips.append(AudioFileClip(typing_sound).set_start(duration))
+                    duration += TYPING_FRAME_DURATION * TYPING_ANIMATION_FRAMES
                 continue
             else:
                 if "#!" in line:
