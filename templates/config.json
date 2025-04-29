@@ -6,9 +6,9 @@
     "green_arrow": "assets/green_arrow.png",
     "red_arrow": "assets/red_arrow.png",
     "fonts_dir": "assets/fonts/whitney",
-    "intermediate_video": "output/output.mp4",
+    "intermediate_video": "chat/output.mp4",
     "final_video": "output/final_video.mp4",
-    "ffmpeg_output": "output/output.mp4"
+    "ffmpeg_output": "chat/output.mp4"
   },
   "layout": {
     "world_width": 1280,
