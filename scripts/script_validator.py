@@ -3,8 +3,7 @@
 import os, sys, json, argparse
 
 def load_config(path):
-    with open(path, 'r', encoding='utf8') as f:
-        return json.load(f)
+    return json.load(open(path, encoding='utf8'))
 
 def validate(convo, config):
     errors = []
@@ -27,10 +26,9 @@ def validate(convo, config):
                     float(ev['duration'])
                 except:
                     errors.append(f"#{idx}: bad duration '{ev['duration']}'")
-        else:  # join
+        else:
             if 'duration' not in ev:
                 errors.append(f"#{idx}: missing duration for join")
-        # check sound file exists
         fn = os.path.join(sd, f"{ev['sound']}.mp3")
         if not os.path.isfile(fn):
             errors.append(f"#{idx}: file not found {fn}")
@@ -38,8 +36,8 @@ def validate(convo, config):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument('config', help='Path to config.json')
-    p.add_argument('conversation', help='Path to conversation.json')
+    p.add_argument('config')
+    p.add_argument('conversation')
     args = p.parse_args()
 
     cfg = load_config(args.config)

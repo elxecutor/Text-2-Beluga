@@ -4,39 +4,36 @@ import os, json, subprocess
 
 def load_config(path):
     cfg = json.load(open(path, encoding='utf8'))
-    # collapse any redundant segments in chat_output
     cfg['paths']['chat_output'] = os.path.normpath(cfg['paths']['chat_output'])
     return cfg
 
 def build_concat_file(cfg, convo):
-    chat_dir = os.path.normpath(cfg['paths']['chat_output'])
+    chat = cfg['paths']['chat_output']
     lines = []
-    for idx, ev in enumerate(convo, 1):
-        img = os.path.join("..", chat_dir, f"{idx:03d}.png")
+    for i, ev in enumerate(convo,1):
+        img = os.path.join("..", chat, f"{i:03d}.png")
         lines.append(f"file '{img}'\noutpoint {ev['duration']}")
-    # last hold
     lines.append(f"file '{img}'\noutpoint 0.04")
-
-    concat = os.path.join(chat_dir, 'concat.txt')
-    with open(concat, 'w') as f:
-        f.write("\n".join(lines))
-    return concat
+    cf = os.path.join(chat, 'concat.txt')
+    open(cf,'w').write("\n".join(lines))
+    return cf
 
 def compile_video(cfg, convo):
     concat = build_concat_file(cfg, convo)
+    os.makedirs('output', exist_ok=True)
     out    = cfg['paths']['ffmpeg_output']
-    width  = cfg['layout']['world_width']
+    w      = cfg['layout']['world_width']
     cmd = [
-        'ffmpeg','-f','concat','-safe','0','-i',concat,
-        '-vcodec','libx264','-r','25','-crf','25',
-        '-vf',f"scale={width}:-2,pad={width}:{width}:(ow-iw)/2:(oh-ih)/2",
-        '-pix_fmt','yuv420p', out
+      'ffmpeg','-f','concat','-safe','0','-i',concat,
+      '-vcodec','libx264','-r','25','-crf','25',
+      '-vf',f"scale={w}:-2,pad={w}:{w}:(ow-iw)/2:(oh-ih)/2",
+      '-pix_fmt','yuv420p', out
     ]
     subprocess.run(cmd, check=True)
     os.remove(concat)
 
 if __name__=='__main__':
-    import argparse
+    import argparse, json
     p = argparse.ArgumentParser()
     p.add_argument('config')
     p.add_argument('conversation')
