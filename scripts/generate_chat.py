@@ -11,7 +11,7 @@ from pilmoji import Pilmoji
 
 # ——— Markdown parsing ——————————————————————————————————————————————
 
-MD_RE = re.compile(r"(\*\*\*.+?\*\*\*|\*\*.+?\*\*|\*.+?\*|~.+?~|@\w+|[^*\~@]+)")
+MD_RE = re.compile(r"(\*\*\*.+?\*\*\*|\*\*.+?\*\*|\*.+?\*|~.+?~|@\w+|#\w+|[^*\~@#]+)")
 
 def parse_md(text):
     toks = MD_RE.findall(text)
@@ -27,6 +27,8 @@ def parse_md(text):
             parsed.append(('strike', t[1:-1]))
         elif t.startswith('@'):
             parsed.append(('mention', t))
+        elif t.startswith('#'):
+            parsed.append(('channel mention', t))
         else:
             parsed.append(('text', t))
     return parsed
@@ -134,9 +136,8 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
                 elif kind == 'strike':
                     pil.text((x, y), txt, tuple(L['message']['color']), font=fonts['message_strike'])
                     asc,_ = fonts['message_strike'].getmetrics()
-                    mid = y + asc//2
-                    draw.line((x, mid, x + fonts['message_strike'].getbbox(txt)[2], mid),
-                              fill=tuple(L['message']['color']))
+                    mid = y + asc//1.4
+                    draw.line((x, mid, x + fonts['message_strike'].getbbox(txt)[2], mid), fill=tuple(L['message']['color']), width=2)
                     w = fonts['message_strike'].getbbox(txt)[2]
                 else:  # mention
                     pad = L['message']['mention_pad']
