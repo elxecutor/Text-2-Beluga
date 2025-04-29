@@ -241,7 +241,7 @@ def save_images(cfg, convo, chars):
             pending_dur = ev['duration']
             img = render_block(current_actor, current_lines, cfg, fonts, profpics, colors, now)
             img.save(os.path.join(out, f"{idx:03d}.png"))
-            now += datetime.timedelta(seconds=pending_dur)
+            now += datetime.timedelta(minutes=pending_dur)
             idx += 1
 
         elif ev['type'] == 'join':  # join event
