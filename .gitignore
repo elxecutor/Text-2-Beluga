@@ -359,11 +359,7 @@ pyrightconfig.json
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
 chat/
-tests.py
-output.mp4
-final_video.mp4
-script.txt
-ggsans/
-mp4/
-OLDREADME.txt
-PROMPT.txt
+utils/
+temp/
+output/
+JSYK.md
