@@ -1,0 +1,323 @@
+[
+  { "type": "join", "actor": "Billy", "duration": 1.5, "sound": "join" },
+  { "type": "join", "actor": "Nerd", "duration": 1.0, "sound": "join" },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "__hello western dogs__ 🐕",
+    "duration": 2.0,
+    "sound": "message"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "💀 bruh",
+    "duration": 1.0,
+    "sound": "vineboom"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "who invited this guy",
+    "duration": 2.0,
+    "sound": "softmessage"
+  },
+  { "type": "join", "actor": "Cashew", "duration": 1.0, "sound": "join" },
+  {
+    "type": "message",
+    "actor": "Cashew",
+    "text": "__where am i__ 🤨",
+    "duration": 2.0,
+    "sound": "confusion"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "💀💀 this dude still loading",
+    "duration": 1.5,
+    "sound": "pop"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "💀",
+    "duration": 1.0,
+    "sound": "pop"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "**YOU AMERICAN RAT** 🐀",
+    "duration": 2.0,
+    "sound": "hehascome"
+  },
+  { "type": "join", "actor": "Peanut", "duration": 1.0, "sound": "join" },
+  {
+    "type": "message",
+    "actor": "Peanut",
+    "text": "What is happening in this WhatsApp group?? 🤔",
+    "duration": 2.5,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "💀💀💀",
+    "duration": 1.0,
+    "sound": "pop"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "NOT WHATSAPP LMAOOO",
+    "duration": 2.0,
+    "sound": "vineboom"
+  },
+  { "type": "join", "actor": "Cheddar", "duration": 1.0, "sound": "join" },
+  {
+    "type": "message",
+    "actor": "Cheddar",
+    "text": "**SAD!**",
+    "duration": 1.5,
+    "sound": "error_beep"
+  },
+  {
+    "type": "message",
+    "actor": "Cheddar",
+    "text": "__i was banned from twitter but not discord__ 🤡",
+    "duration": 2.0,
+    "sound": "pop"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "@Cheddar **your hair is fake** 😭😭",
+    "duration": 2.0,
+    "sound": "message"
+  },
+  {
+    "type": "message",
+    "actor": "Cheddar",
+    "text": "**FAKE NEWS!**",
+    "duration": 1.0,
+    "sound": "vineboom"
+  },
+  {
+    "type": "message",
+    "actor": "Cheddar",
+    "text": "**__My hair is the best,__**",
+    "duration": 1.5,
+    "sound": "pop"
+  },
+  {
+    "type": "message",
+    "actor": "Cheddar",
+    "text": "**__everyone says so__** 💅",
+    "duration": 2.5,
+    "sound": "softmessage"
+  },
+  { "type": "join", "actor": "Pizza", "duration": 1.0, "sound": "join" },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "Why am I here?",
+    "duration": 1.0,
+    "sound": "pop"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "I am",
+    "duration": 1.0,
+    "sound": "softmessage"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "__dead__",
+    "duration": 2.0,
+    "sound": "scary"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "💀",
+    "duration": 1.0,
+    "sound": "pop"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "YO WTF 😭",
+    "duration": 2.0,
+    "sound": "confusion"
+  },
+  {
+    "type": "message",
+    "actor": "Cashew",
+    "text": "@Pizza *ur alive?* 😭",
+    "duration": 2.0,
+    "sound": "message"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "__Temporarily.__ 👑",
+    "duration": 2.0,
+    "sound": "modpablo"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "**GUYS STOP FIGHTING**",
+    "duration": 2.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "i got **admin access**",
+    "duration": 2.0,
+    "sound": "zap"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "to the US nukes",
+    "duration": 2.0,
+    "sound": "modeugene"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "😈",
+    "duration": 1.0,
+    "sound": "message"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "NO TF YOU DIDNT 😭",
+    "duration": 1.5,
+    "sound": "error_beep"
+  },
+  {
+    "type": "message",
+    "actor": "Cheddar",
+    "text": "@Pizza **DEACTIVATE THAT NOW!** 🚨",
+    "duration": 2.0,
+    "sound": "vineboom"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "oops...",
+    "duration": 1.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "autocorrect sent \"Launch\" instead of \"Lunch\"",
+    "duration": 1.0,
+    "sound": "error_beep"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "💀",
+    "duration": 2.0,
+    "sound": "vineboom"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "**BRO WTF YOU MEAN \"OOPS\"** 💀",
+    "duration": 2.0,
+    "sound": "scary"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "💀💀💀",
+    "duration": 2.0,
+    "sound": "message"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "**WAR IS STARTING** 🚀",
+    "duration": 2.0,
+    "sound": "explosion"
+  },
+  {
+    "type": "message",
+    "actor": "Cashew",
+    "text": "**CORNFLOWER INITIATIVE READY** 💪😤",
+    "duration": 2.0,
+    "sound": "error_beep"
+  },
+  {
+    "type": "message",
+    "actor": "Peanut",
+    "text": "What is this nonsense 😭",
+    "duration": 2.0,
+    "sound": "message"
+  },
+  {
+    "type": "message",
+    "actor": "Cheddar",
+    "text": "**STOP THE COUNT** 🗳️",
+    "duration": 1.5,
+    "sound": "error_beep"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "Guess I'll die",
+    "duration": 1.5,
+    "sound": "scary"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "__again__",
+    "duration": 0.5,
+    "sound": "vineboom"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "💀",
+    "duration": 1.5,
+    "sound": "softmessage"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "bruh this aint real life 💀",
+    "duration": 2.0,
+    "sound": "error_beep"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "**OH SHIT THE MISSILES ARE OUT** 🚀🚀🚀",
+    "duration": 2.0,
+    "sound": "vineboom"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "**GOODBYE WESTERN DOGS** 🐶🔥",
+    "duration": 2.0,
+    "sound": "explosion"
+  },
+  {
+    "type": "message",
+    "actor": "Billy",
+    "text": "💀 bruh im logging off",
+    "duration": 1.5,
+    "sound": "leave"
+  }
+]
