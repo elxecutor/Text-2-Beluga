@@ -1,53 +1,46 @@
-import os
-from sound_effects import add_sounds
+# scripts/compile_images.py
 
-def gen_vid(filename):
-    input_folder = '../chat/'
-    image_files = sorted([f for f in os.listdir(input_folder) if f.endswith('.png')])
+import os, json, subprocess
 
-    # Read durations from the file.
-    durations = []
-    with open(filename, encoding="utf8") as f:
-        name_up_next = True
-        
-        lines = f.read().splitlines()
-        for line in lines:
-            if line == '':
-                name_up_next = True
-                continue
-            elif line[0] == '#':
-                continue
-            elif line.startswith("WELCOME"):
-                if "#!" in line:
-                    durations.append(line.split('$^')[1].split("#!")[0])
-                else:
-                    durations.append(line.split('$^')[1])
-                continue
-            elif name_up_next == True:
-                name_up_next = False
-                continue
-            else:
-                if "#!" in line:
-                    durations.append(line.split('$^')[1].split("#!")[0])
-                else:
-                    durations.append(line.split('$^')[1])
-                
-                
-    # Create a text file to store the image paths
-    with open('image_paths.txt', 'w') as file:    
-        count = 0
-        for image_file in image_files:
-            file.write(f"file '{input_folder}{image_file}'\noutpoint {durations[count]}\n")
-            count += 1
-        file.write(f"file '{input_folder}{image_files[-1]}'\noutpoint 0.04\n")
+def load_config(path):
+    cfg = json.load(open(path, encoding='utf8'))
+    # collapse any redundant segments in chat_output
+    cfg['paths']['chat_output'] = os.path.normpath(cfg['paths']['chat_output'])
+    return cfg
 
-    video_width, video_height = 1280, 720
-    ffmpeg_cmd = (
-        f"ffmpeg -f concat -safe 0 -i image_paths.txt -vcodec libx264 -r 25 -crf 25 "
-        f"-vf \"scale={video_width}:{video_height}:force_original_aspect_ratio=decrease,"
-        f"pad={video_width}:{video_height}:(ow-iw)/2:(oh-ih)/2\" -pix_fmt yuv420p output.mp4"
-    )
-    os.system(ffmpeg_cmd)
-    os.remove('image_paths.txt')
+def build_concat_file(cfg, convo):
+    chat_dir = os.path.normpath(cfg['paths']['chat_output'])
+    lines = []
+    for idx, ev in enumerate(convo, 1):
+        img = os.path.join("..", chat_dir, f"{idx:03d}.png")
+        lines.append(f"file '{img}'\noutpoint {ev['duration']}")
+    # last hold
+    lines.append(f"file '{img}'\noutpoint 0.04")
 
-    add_sounds(filename)
+    concat = os.path.join(chat_dir, 'concat.txt')
+    with open(concat, 'w') as f:
+        f.write("\n".join(lines))
+    return concat
+
+def compile_video(cfg, convo):
+    concat = build_concat_file(cfg, convo)
+    out    = cfg['paths']['ffmpeg_output']
+    width  = cfg['layout']['world_width']
+    cmd = [
+        'ffmpeg','-f','concat','-safe','0','-i',concat,
+        '-vcodec','libx264','-r','25','-crf','25',
+        '-vf',f"scale={width}:-2,pad={width}:{width}:(ow-iw)/2:(oh-ih)/2",
+        '-pix_fmt','yuv420p', out
+    ]
+    subprocess.run(cmd, check=True)
+    os.remove(concat)
+
+if __name__=='__main__':
+    import argparse
+    p = argparse.ArgumentParser()
+    p.add_argument('config')
+    p.add_argument('conversation')
+    args = p.parse_args()
+    cfg   = load_config(args.config)
+    convo = json.load(open(args.conversation, encoding='utf8'))
+    compile_video(cfg, convo)
