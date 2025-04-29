@@ -52,50 +52,87 @@ def init_fonts(cfg):
     return fonts
 
 # ——— Rendering functions ——————————————————————————————————————————————
+def wrap_text(text, font, max_width):
+    words = text.split()
+    lines = []
+    current = ""
+    for word in words:
+        test = f"{current} {word}".strip()
+        # measure width of the combined string
+        if font.getbbox(test)[2] <= max_width:
+            current = test
+        else:
+            lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines
 
 def render_block(actor, lines, cfg, fonts, profpics, colors, now):
     """
-    Renders a cumulative block of messages for `actor` with all `lines` so far.
+    Renders a cumulative block of messages for `actor`, with each message
+    wrapped to fit the world_width and canvas height adjusted.
     """
     L = cfg['layout']
-    height = L['message']['y'] + L['message']['line_height'] * len(lines)
-    canvas = Image.new('RGBA', (L['world_width'], height), tuple(L['world_color']))
+    world_w = L['world_width']
+    x0 = L['message']['x']
+    # leave a small right margin
+    max_text_w = world_w - x0 - 20
+
+    # 1) wrap every logical line into sub-lines
+    wrapped = []
+    for raw in lines:
+        sublines = wrap_text(raw, fonts['message'], max_text_w)
+        wrapped.extend(sublines)
+
+    # 2) compute needed height
+    line_h = L['message']['line_height']
+    # top margin + one line height per wrapped-line + bottom padding
+    height = L['message']['y'] + line_h * len(wrapped) + 20
+
+    # ensure we’re at least tall enough for the profile pic
+    pic_y, pic_size = L['profpic']['position'][1], L['profpic']['size']
+    min_h = pic_y + pic_size + 10
+    if height < min_h:
+        height = min_h
+
+    canvas = Image.new('RGBA', (world_w, height), tuple(L['world_color']))
     draw = ImageDraw.Draw(canvas)
 
-    # profile picture
+    # paste profile picture
     pic = Image.open(profpics[actor]).convert('RGBA')
-    pic.thumbnail((L['profpic']['size'], L['profpic']['size']), Image.LANCZOS)
+    pic.thumbnail((pic_size, pic_size), Image.LANCZOS)
     mask = Image.new('L', pic.size, 0)
-    ImageDraw.Draw(mask).ellipse((0,0,*pic.size), fill=255)
+    ImageDraw.Draw(mask).ellipse((0, 0, *pic.size), fill=255)
     canvas.paste(pic, tuple(L['profpic']['position']), mask)
 
-    # name + timestamp
+    # draw name + timestamp
     nx, ny = L['name']['pos']
     draw.text((nx, ny), actor, fill=colors[actor], font=fonts['name'])
     ts = now.strftime('%-I:%M %p')
     tx = nx + fonts['name'].getbbox(actor)[2] + L['time']['spacing']
     draw.text((tx, ny), f"Today at {ts}", fill=tuple(L['time']['color']), font=fonts['time'])
 
-    # message content
+    # draw wrapped message lines
     y = L['message']['y']
     with Pilmoji(canvas) as pil:
-        for line in lines:
-            x = L['message']['x']
-            for kind, txt in parse_md(line):
+        for raw in wrapped:
+            x = x0
+            for kind, txt in parse_md(raw):
                 if kind == 'text':
-                    pil.text((x,y), txt, tuple(L['message']['color']), font=fonts['message'])
+                    pil.text((x, y), txt, tuple(L['message']['color']), font=fonts['message'])
                     w = fonts['message'].getbbox(txt)[2]
                 elif kind == 'bold':
-                    pil.text((x,y), txt, tuple(L['message']['color']), font=fonts['message_bold'])
+                    pil.text((x, y), txt, tuple(L['message']['color']), font=fonts['message_bold'])
                     w = fonts['message_bold'].getbbox(txt)[2]
                 elif kind == 'italic':
-                    pil.text((x,y), txt, tuple(L['message']['color']), font=fonts['message_italic'])
+                    pil.text((x, y), txt, tuple(L['message']['color']), font=fonts['message_italic'])
                     w = fonts['message_italic'].getbbox(txt)[2]
                 elif kind == 'bolditalic':
-                    pil.text((x,y), txt, tuple(L['message']['color']), font=fonts['message_bold_italic'])
+                    pil.text((x, y), txt, tuple(L['message']['color']), font=fonts['message_bold_italic'])
                     w = fonts['message_bold_italic'].getbbox(txt)[2]
                 elif kind == 'strike':
-                    pil.text((x,y), txt, tuple(L['message']['color']), font=fonts['message_strike'])
+                    pil.text((x, y), txt, tuple(L['message']['color']), font=fonts['message_strike'])
                     asc,_ = fonts['message_strike'].getmetrics()
                     mid = y + asc//2
                     draw.line((x, mid, x + fonts['message_strike'].getbbox(txt)[2], mid),
@@ -106,10 +143,10 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
                     w_txt = fonts['mention'].getbbox(txt)[2]
                     bg = [x, y-pad//2, x + w_txt + pad, y + fonts['mention'].getbbox(txt)[3] + pad//2]
                     draw.rounded_rectangle(bg, radius=8, fill=tuple(L['name']['mention_bg']))
-                    pil.text((x+pad/2,y), txt, tuple(L['name']['mention_text']), font=fonts['mention'])
+                    pil.text((x+pad/2, y), txt, tuple(L['name']['mention_text']), font=fonts['mention'])
                     w = w_txt + pad
                 x += w
-            y += L['message']['line_height']
+            y += line_h
 
     return canvas
 

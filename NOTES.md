@@ -7,13 +7,13 @@
 - good cmd-line user interface
 - write a README file
 - allow for strikethrough message text
+- allow textwrap for longer text and an increase in high to align properly
 
 ----------------------------------------------------
 
 # (TRY) TODO
 - fix timestamp
-- allow textwrap for longer text and an increase in high to align properly
-- ability to add background music
+- ability to add background music (maybe to individual messages for tempo change and shit)
 - AI powered chat script creator
 - support for links (URLs) and attahments
 - improve script_validator.py
