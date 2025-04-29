@@ -143,6 +143,36 @@ def render_join(ev, cfg, fonts, colors, now):
 
     return canvas
 
+def render_leave(ev, cfg, fonts, colors, now):
+    """
+    Renders a leave message with role-colored name.
+    """
+    L = cfg['layout']['left']
+    canvas = Image.new('RGBA', (cfg['layout']['world_width'], L['height']), tuple(cfg['layout']['world_color']))
+    draw = ImageDraw.Draw(canvas)
+
+    # red arrow
+    arrow = Image.open(cfg['paths']['red_arrow']).convert('RGBA')
+    arrow.thumbnail((40,40), Image.LANCZOS)
+    ax = cfg['layout']['profpic']['position'][0]
+    ay = (L['height'] - arrow.height) // 2
+    canvas.paste(arrow, (ax, ay), arrow)
+
+    # split template around CHARACTER
+    template = random.choice(cfg['left_texts'])
+    before, after = template.split("CHARACTER")
+    # draw before text
+    tx = ax + arrow.width + 20
+    draw.text((tx, ay), before, fill=tuple(L['color']), font=fonts['message'])
+    # draw name in role color
+    w_before = fonts['message'].getbbox(before)[2]
+    draw.text((tx + w_before, ay), ev['actor'], fill=colors[ev['actor']], font=fonts['name'])
+    # draw after
+    w_name = fonts['name'].getbbox(ev['actor'])[2]
+    draw.text((tx + w_before + w_name, ay), after, fill=tuple(L['color']), font=fonts['message'])
+
+    return canvas
+
 # ——— Main with cumulative logic —————————————————————————————————————————
 
 def save_images(cfg, convo, chars):
@@ -176,13 +206,24 @@ def save_images(cfg, convo, chars):
             now += datetime.timedelta(seconds=pending_dur)
             idx += 1
 
-        else:  # join event
+        elif ev['type'] == 'join':  # join event
             # reset current block because join breaks conversation flow
             current_actor = None
             current_lines = []
             pending_dur = ev['duration']
 
             img = render_join(ev, cfg, fonts, colors, now)
+            img.save(os.path.join(out, f"{idx:03d}.png"))
+            now += datetime.timedelta(seconds=ev['duration'])
+            idx += 1
+
+        elif ev['type'] == 'leave':  # leave event
+            # reset current block because leave breaks conversation flow
+            current_actor = None
+            current_lines = []
+            pending_dur = ev['duration']
+
+            img = render_leave(ev, cfg, fonts, colors, now)
             img.save(os.path.join(out, f"{idx:03d}.png"))
             now += datetime.timedelta(seconds=ev['duration'])
             idx += 1

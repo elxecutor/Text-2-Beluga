@@ -10,7 +10,7 @@ def validate(convo, config):
     codes = set(config['sound_codes'])
     sd = config['paths']['sound_dir']
     for idx, ev in enumerate(convo, 1):
-        if ev.get('type') not in ('join','message'):
+        if ev.get('type') not in ('join','leave','message'):
             errors.append(f"#{idx}: bad type {ev.get('type')}")
         if 'actor' not in ev:
             errors.append(f"#{idx}: missing actor")
