@@ -1,0 +1,121 @@
+{
+  "paths": {
+    "chat_output": "chat",
+    "profile_pics": "assets/profile_pictures",
+    "sound_dir": "assets/sounds/mp3",
+    "green_arrow": "assets/green_arrow.png",
+    "red_arrow": "assets/red_arrow.png",
+    "fonts_dir": "assets/fonts/whitney",
+    "intermediate_video": "output/output.mp4",
+    "final_video": "output/final_video.mp4",
+    "ffmpeg_output": "output/output.mp4"
+  },
+  "layout": {
+    "world_width": 1280,
+    "world_color": [54, 57, 63, 255],
+
+    "fonts": {
+      "name": { "file": "semibold.ttf", "size": 50 },
+      "time": { "file": "semibold.ttf", "size": 40 },
+      "message": { "file": "medium.ttf", "size": 50 },
+      "message_bold": { "file": "bold.ttf", "size": 50 },
+      "message_italic": { "file": "medium_italic.ttf", "size": 50 },
+      "message_bold_italic": { "file": "bold_italic.ttf", "size": 50 },
+      "message_strike": { "file": "medium.ttf", "size": 50 },
+      "mention": { "file": "semibold.ttf", "size": 50 }
+    },
+
+    "profpic": {
+      "size": 120,
+      "position": [36, 45]
+    },
+
+    "name": {
+      "pos": [190, 53],
+      "mention_bg": [74, 75, 114, 255],
+      "mention_text": [201, 205, 251, 255]
+    },
+
+    "time": {
+      "spacing": 25,
+      "color": [148, 155, 164, 255]
+    },
+
+    "message": {
+      "x": 190,
+      "y": 115,
+      "line_height": 70,
+      "color": [220, 222, 225, 255],
+      "mention_pad": 8
+    },
+
+    "joined": {
+      "height": 100,
+      "font": "medium.ttf",
+      "size": 45,
+      "color": [157, 161, 164]
+    },
+    
+    "left": {
+      "height": 100,
+      "font": "medium.ttf",
+      "size": 45,
+      "color": [157, 161, 164]
+    }
+  },
+
+  "joined_texts": [
+    "CHARACTER joined the party.",
+    "CHARACTER is here.",
+    "Welcome, CHARACTER. We hope you brought pizza.",
+    "A wild CHARACTER appeared.",
+    "CHARACTER just landed.",
+    "CHARACTER just slid into the server.",
+    "CHARACTER just showed up.",
+    "Welcome CHARACTER. Say hi!",
+    "CHARACTER hopped into the server.",
+    "Everyone welcome CHARACTER!",
+    "Glad you're here, CHARACTER!",
+    "Good to see you, CHARACTER!",
+    "Yay you made it, CHARACTER!"
+  ],
+
+  "left_texts": [
+    "CHARACTER left the party.",
+    "CHARACTER has left.",
+    "Goodbye, CHARACTER. See you next time!",
+    "CHARACTER just exited the server.",
+    "Sad to see you go, CHARACTER.",
+    "CHARACTER just slid out.",
+    "CHARACTER just bounced.",
+    "Everyone wave goodbye to CHARACTER!",
+    "CHARACTER hopped off the server.",
+    "CHARACTER logged off.",
+    "Take care, CHARACTER!",
+    "CHARACTER took their leave."
+  ],
+
+  "sound_codes": [
+    "click",
+    "confusion",
+    "cough",
+    "explosion",
+    "hamburger",
+    "hehascome",
+    "join",
+    "knock",
+    "leave",
+    "message",
+    "modeugene",
+    "modpablo",
+    "pop",
+    "scary",
+    "softmessage",
+    "typing",
+    "vineboom",
+    "zap",
+    "error_beep",
+    "ethereal_hum",
+    "email_send"
+  ]
+}

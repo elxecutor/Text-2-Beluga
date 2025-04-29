@@ -1,0 +1,21 @@
+[
+  {
+    "type": "join",
+    "actor": "ActorName",
+    "duration": 1.0,
+    "sound": "join"
+  },
+  {
+    "type": "message",
+    "actor": "ActorName",
+    "text": "Your message text here",
+    "duration": 1.5,
+    "sound": "message"
+  },
+  {
+    "type": "leave",
+    "actor": "ActorName",
+    "duration": 1.0,
+    "sound": "leave"
+  }
+]
