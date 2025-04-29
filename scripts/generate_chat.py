@@ -78,7 +78,6 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
     L = cfg['layout']
     world_w = L['world_width']
     x0 = L['message']['x']
-    # leave a small right margin
     max_text_w = world_w - x0 - 20
 
     # 1) wrap every logical line into sub-lines
@@ -89,10 +88,7 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
 
     # 2) compute needed height
     line_h = L['message']['line_height']
-    # top margin + one line height per wrapped-line + bottom padding
     height = L['message']['y'] + line_h * len(wrapped) + 20
-
-    # ensure we’re at least tall enough for the profile pic
     pic_y, pic_size = L['profpic']['position'][1], L['profpic']['size']
     min_h = pic_y + pic_size + 10
     if height < min_h:
@@ -114,6 +110,13 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
     ts = now.strftime('%-I:%M %p')
     tx = nx + fonts['name'].getbbox(actor)[2] + L['time']['spacing']
     draw.text((tx, ny), f"Today at {ts}", fill=tuple(L['time']['color']), font=fonts['time'])
+
+    # ——— ADD: draw "(edited)" next to timestamp if flagged —————————————
+    global EDITED_FLAG
+    if EDITED_FLAG:
+        edited_txt = " (edited)"
+        width_ts = fonts['time'].getbbox(f"Today at {ts}")[2]
+        draw.text((tx + width_ts, ny), edited_txt, fill=tuple(L['time']['color']), font=fonts['time'])
 
     # draw wrapped message lines
     y = L['message']['y']
@@ -225,47 +228,45 @@ def save_images(cfg, convo, chars):
     now = datetime.datetime.now()
     current_actor = None
     current_lines = []
-    pending_dur   = 0.0
     idx = 1
 
     for ev in convo:
         if ev['type'] == 'message':
-            # same actor?
+            global EDITED_FLAG
+            EDITED_FLAG = ev.get('edited', False)
+
+            # **replace** when edited, otherwise append or reset
             if ev['actor'] == current_actor:
-                current_lines.append(ev['text'])
+                if ev.get('edited', False):
+                    current_lines[-1] = ev['text']
+                else:
+                    current_lines.append(ev['text'])
             else:
-                # if switching actor, reset
                 current_actor = ev['actor']
                 current_lines = [ev['text']]
 
-            pending_dur = ev['duration']
             img = render_block(current_actor, current_lines, cfg, fonts, profpics, colors, now)
             img.save(os.path.join(out, f"{idx:03d}.png"))
-            now += datetime.timedelta(minutes=pending_dur)
+            now += datetime.timedelta(minutes=ev['duration'])
             idx += 1
 
-        elif ev['type'] == 'join':  # join event
-            # reset current block because join breaks conversation flow
+            EDITED_FLAG = False
+
+        elif ev['type'] == 'join':
             current_actor = None
             current_lines = []
-            pending_dur = ev['duration']
-
             img = render_join(ev, cfg, fonts, colors, now)
             img.save(os.path.join(out, f"{idx:03d}.png"))
             now += datetime.timedelta(seconds=ev['duration'])
             idx += 1
 
-        elif ev['type'] == 'leave':  # leave event
-            # reset current block because leave breaks conversation flow
+        elif ev['type'] == 'leave':
             current_actor = None
             current_lines = []
-            pending_dur = ev['duration']
-
             img = render_leave(ev, cfg, fonts, colors, now)
             img.save(os.path.join(out, f"{idx:03d}.png"))
             now += datetime.timedelta(seconds=ev['duration'])
             idx += 1
-
 
 
 if __name__ == '__main__':

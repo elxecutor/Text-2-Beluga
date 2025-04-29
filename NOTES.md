@@ -9,6 +9,8 @@
 - allow for strikethrough message text
 - allow textwrap for longer text and an increase in high to align properly
 - fix timestamp
+- Proper and sexy padding
+- Add "edited" tags and precise timestamps.
 
 ----------------------------------------------------
 
@@ -18,10 +20,7 @@
 - support for links (URLs) and attahments
 - improve script_validator.py
 - Add a fade transition between clips
-- Add background music
-- Add "edited" tags and precise timestamps.
 - Text2Beluga discord bot
-- Proper and sexy padding
 
 ----------------------------------------------------
 
