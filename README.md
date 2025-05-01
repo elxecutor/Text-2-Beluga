@@ -13,7 +13,7 @@ Effortlessly transform plain text files into dynamic, Discord-style conversation
     - Combined ***bold italic***
     - ~~Strikethrough~~ text
     - Native emoji support
-    - **Code Blocks & Monospace:** Use triple backticks to denote code blocks (e.g., ```python ...```) so that your code is rendered in a clear monospace font.
+    - **Code Blocks & Monospace:** Use triple backticks to denote code blocks (e.g., ```...```) so that your code is rendered in a clear monospace font.
     - **Links:** Any URL starting with `http://` or `https://` is automatically parsed and styled (often with an underline and a blue hue).
     - Mentions (`@Character`) and channel tags (`#channel`)
     - Custom durations per message
