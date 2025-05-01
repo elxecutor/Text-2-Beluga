@@ -137,7 +137,7 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
     if EDITED_FLAG:
         edited_txt = " (edited)"
         width_ts = fonts['time'].getbbox(f"Today at {ts}")[2]
-        draw.text((tx + width_ts, ny), edited_txt, fill=tuple(L['time']['color']), font=fonts['time'])
+        draw.text((tx + width_ts, ny+10), edited_txt, fill=tuple(L['time']['color']), font=fonts['time'])
 
     # draw wrapped message lines
     y = L['message']['y']
@@ -245,6 +245,50 @@ def render_leave(ev, cfg, fonts, colors, now):
     draw.text((tx + w_before + w_name, ay), after, fill=tuple(L['color']), font=fonts['message'])
 
     return canvas
+
+def render_attachments(canvas, attachments, cfg, fonts, start_y):
+    """
+    Draw attachments below the text block on `canvas`.
+    Returns the new Y offset after rendering all attachments.
+    """
+    draw = ImageDraw.Draw(canvas)
+    L = cfg['layout']['attachment']
+    x = L['x']
+    y = start_y
+    max_w = L['max_width']
+    pad = L['padding']
+
+    for att in attachments:
+        if att['type'] == 'image':
+            try:
+                img = Image.open(att['path']).convert('RGBA')
+                img.thumbnail((max_w, L['max_height']), Image.LANCZOS)
+                canvas.paste(img, (x, y), img)
+                y += img.height + pad
+            except Exception as e:
+                # fallback to filename card on error
+                draw.text((x, y), f"[Error loading {att['filename']}]", font=fonts['message'], fill=(255,0,0))
+                y += fonts['message'].getbbox(att['filename'])[3] + pad
+
+        elif att['type'] == 'text':
+            # draw a file icon or just a box with filename
+            box_h = L['text_box_height']
+            draw.rectangle((x, y, x+max_w, y+box_h), outline=L['border_color'])
+            draw.text((x+pad, y+pad),
+                      att['filename'],
+                      font=fonts['message_bold'],
+                      fill=tuple(L['text_color']))
+            y += box_h + pad
+
+        else:  # generic other file
+            draw.rectangle((x, y, x+max_w, y+L['other_box_height']), outline=L['border_color'])
+            draw.text((x+pad, y+pad),
+                      att['filename'],
+                      font=fonts['message'],
+                      fill=tuple(L['text_color']))
+            y += L['other_box_height'] + pad
+
+    return y
 
 # ——— Main with cumulative logic —————————————————————————————————————————
 
