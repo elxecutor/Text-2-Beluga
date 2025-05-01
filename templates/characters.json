@@ -1,6 +1,10 @@
 {
-    "CharacterName": {
+    "CharacterName1": {
         "profile_pic": "perm/your_image.ext",
+        "role_color": "#hexvalue"
+    },
+    "CharacterName2": {
+        "profile_pic": "temp/your_image.ext",
         "role_color": "#hexvalue"
     }
 }
