@@ -11,14 +11,14 @@
 - fix timestamp
 - Proper and sexy padding
 - Add "edited" tags and precise timestamps.
+- allow for monospace text parsing also 
 
 ----------------------------------------------------
 
 # (TRY) TODO
-- allow for monospace text parsing also 
+- support for links (URLs) and attahments
 - ability to add background music (maybe to individual messages for tempo change and shit)
 - AI powered chat script creator
-- support for links (URLs) and attahments
 - improve script_validator.py
 - Add a fade transition between clips
 - Text2Beluga discord bot
