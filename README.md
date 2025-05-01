@@ -81,7 +81,6 @@ Below is an example JSON template to define your conversation script:
 - **Channel Mention:** Use `#channel`
 - **Emojis:** Supported directly in messages.
 
-
 ## Running the Program 🚀
 
 1. **Prepare your chat script file.**
