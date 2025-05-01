@@ -12,14 +12,16 @@ from pilmoji import Pilmoji
 # ——— Markdown parsing ——————————————————————————————————————————————
 
 MD_RE = re.compile(
-    r"(https?://\S+|"               # 1) URL
-    r"\*\*\*.+?\*\*\*|"             # 2a) ***bolditalic***
-    r"\*\*.+?\*\*|"                 # 2b) **bold**
-    r"\*.+?\*|"                     # 2c) *italic*
-    r"~.+?~|"                       # 2d) ~strike~
-    r"@\w+|"                        # 3a) @mention
-    r"#\w+|"                        # 3b) #channel
-    r"[^\*\~@#\s]+|\s+)"            # 4) text or whitespace
+    r"("
+    r"https?://\S+|"                           # URL
+    r"\*\*\*.+?\*\*\*|"                        # ***bolditalic***
+    r"\*\*.+?\*\*|"                            # **bold**
+    r"\*.+?\*|"                                # *italic*
+    r"~.+?~|"                                  # ~strike~
+    r"@\w+|"                                   # @mention
+    r"#\w+|"                                   # #channel
+    r"[\U0001F300-\U0001FAFF\U00002600-\U000027BF]|"  # emoji range
+    r"[^\*\~@#\s]+|\s+)"                       # text or whitespace
 )
 
 
@@ -41,6 +43,8 @@ def parse_md(text):
             parsed.append(('channel mention', t))
         elif t.startswith("http://") or t.startswith("https://"):
             parsed.append(('link', t))
+        elif re.match(r"[\U0001F300-\U0001FAFF\U00002600-\U000027BF]", t):
+            parsed.append(('emoji', t))
         else:
             parsed.append(('text', t))
     return parsed
@@ -121,7 +125,7 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
     draw.text((nx, ny), actor, fill=colors[actor], font=fonts['name'])
     ts = now.strftime('%-I:%M %p')
     tx = nx + fonts['name'].getbbox(actor)[2] + L['time']['spacing']
-    draw.text((tx, ny), f"Today at {ts}", fill=tuple(L['time']['color']), font=fonts['time'])
+    draw.text((tx, ny+10), f"Today at {ts}", fill=tuple(L['time']['color']), font=fonts['time'])
 
     # ——— ADD: draw "(edited)" next to timestamp if flagged —————————————
     global EDITED_FLAG
@@ -159,6 +163,9 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
                     pil.text((x, y), txt, (66, 135, 245), font=fonts['message'])  # blue color
                     draw.line((x, underline_y, x + fonts['message'].getbbox(txt)[2], underline_y), fill=(66, 135, 245), width=1)
                     w = fonts['message'].getbbox(txt)[2]
+                elif kind == 'emoji':
+                    pil.text((x, y+5), txt + " ", tuple(L['message']['color']), font=fonts['message'])
+                    w = fonts['message'].getbbox(txt + " ")[2]
                 else:  # mention
                     pad = L['message']['mention_pad']
                     w_txt = fonts['mention'].getbbox(txt)[2]
