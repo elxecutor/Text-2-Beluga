@@ -102,10 +102,17 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
     max_text_w = world_w - x0 - 20
 
     # 1) wrap every logical line into sub-lines
-    wrapped = []
-    for raw in lines:
-        sublines = wrap_text(raw, fonts['message'], max_text_w)
-        wrapped.extend(sublines)
+    wrapped = []  # will hold (sublined_text, edited_flag)
+    for msg in lines:
+        # if this entire message is a triple-backtick code block, measure with monospace
+        if msg['text'].startswith('```') and msg['text'].endswith('```'):
+            sublines = wrap_text(msg['text'], fonts['monospace'], max_text_w)
+        else:
+            sublines = wrap_text(msg['text'], fonts['message'],  max_text_w)
+
+        for i, sl in enumerate(sublines):
+            wrapped.append((sl, msg['edited'] if (i == len(sublines)-1) else False))
+
 
     # 2) compute needed height
     line_h = L['message']['line_height']
@@ -142,7 +149,7 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
     # draw wrapped message lines
     y = L['message']['y']
     with Pilmoji(canvas) as pil:
-        for raw in wrapped:
+        for raw, was_edited in wrapped:
             x = x0
             for kind, txt in parse_md(raw):
                 if kind == 'text':
@@ -182,6 +189,14 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
                     pil.text((x+pad/2, y), txt, tuple(L['name']['mention_text']), font=fonts['mention'])
                     w = w_txt + pad
                 x += w
+            if was_edited:
+                edit_str = " (edited)"
+                # x is already at end-of-line after drawing the last token
+                pil.text((x + 4, y),
+                         edit_str,
+                         tuple(L['message']['color']),
+                         font=fonts['message_italic'])
+
             y += line_h
 
     return canvas
@@ -311,15 +326,15 @@ def save_images(cfg, convo, chars):
             global EDITED_FLAG
             EDITED_FLAG = ev.get('edited', False)
 
-            # **replace** when edited, otherwise append or reset
+            msg = {'text': ev['text'], 'edited': ev.get('edited', False)}
             if ev['actor'] == current_actor:
-                if ev.get('edited', False):
-                    current_lines[-1] = ev['text']
+                if msg['edited']:
+                    current_lines[-1] = msg
                 else:
-                    current_lines.append(ev['text'])
+                    current_lines.append(msg)
             else:
                 current_actor = ev['actor']
-                current_lines = [ev['text']]
+                current_lines = [msg]
 
             img = render_block(current_actor, current_lines, cfg, fonts, profpics, colors, now)
             img.save(os.path.join(out, f"{idx:03d}.png"))

@@ -12,11 +12,14 @@
 - Proper and sexy padding
 - Add "edited" tags and precise timestamps.
 - allow for monospace text parsing also 
+- support for links (URLs)
 
 ----------------------------------------------------
 
 # (TRY) TODO
-- support for links (URLs) and attahments
+- correct the monospace code that is not getting wrapped
+- role icons for different characters
+- support for unanimated gifs
 - ability to add background music (maybe to individual messages for tempo change and shit)
 - AI powered chat script creator
 - improve script_validator.py
