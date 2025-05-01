@@ -15,6 +15,7 @@
 ----------------------------------------------------
 
 # (TRY) TODO
+- allow for monospace text parsing also 
 - ability to add background music (maybe to individual messages for tempo change and shit)
 - AI powered chat script creator
 - support for links (URLs) and attahments
