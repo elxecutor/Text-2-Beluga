@@ -13,23 +13,25 @@ from pilmoji import Pilmoji
 
 MD_RE = re.compile(
     r"("
-    r"https?://\S+|"                           # URL
-    r"\*\*\*.+?\*\*\*|"                        # ***bolditalic***
-    r"\*\*.+?\*\*|"                            # **bold**
-    r"\*.+?\*|"                                # *italic*
-    r"~.+?~|"                                  # ~strike~
-    r"@\w+|"                                   # @mention
-    r"#\w+|"                                   # #channel
+    r"\`\`\`.*?\`\`\`|"                               # `monospace`
+    r"https?://\S+|"                                  # URL
+    r"\*\*\*.+?\*\*\*|"                               # ***bolditalic***
+    r"\*\*.+?\*\*|"                                   # **bold**
+    r"\*.+?\*|"                                       # *italic*
+    r"~.+?~|"                                         # ~strike~
+    r"@\w+|"                                          # @mention
+    r"#\w+|"                                          # #channel
     r"[\U0001F300-\U0001FAFF\U00002600-\U000027BF]|"  # emoji range
-    r"[^\*\~@#\s]+|\s+)"                       # text or whitespace
+    r"[^\*\~@#`\s]+|\s+)"                             # text or whitespace
 )
-
 
 def parse_md(text):
     toks = MD_RE.findall(text)
     parsed = []
     for t in toks:
-        if t.startswith('***') and t.endswith('***'):
+        if t.startswith('```') and t.endswith('```'):
+            parsed.append(('monospace', t[3:-3]))
+        elif t.startswith('***') and t.endswith('***'):
             parsed.append(('bolditalic', t[3:-3]))
         elif t.startswith('**') and t.endswith('**'):
             parsed.append(('bold', t[2:-2]))
@@ -71,6 +73,9 @@ def init_fonts(cfg):
 
 # ——— Rendering functions ——————————————————————————————————————————————
 def wrap_text(text, font, max_width):
+    if text.startswith('```') and text.endswith('```'):
+        return text.splitlines()
+        
     words = text.split()
     lines = []
     current = ""
@@ -166,6 +171,9 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
                 elif kind == 'emoji':
                     pil.text((x, y+5), txt + " ", tuple(L['message']['color']), font=fonts['message'])
                     w = fonts['message'].getbbox(txt + " ")[2]
+                elif kind == 'monospace':
+                    pil.text((x, y), txt, tuple(L['message']['color']), font=fonts['monospace'])
+                    w = fonts['monospace'].getbbox(txt)[2]
                 else:  # mention
                     pad = L['message']['mention_pad']
                     w_txt = fonts['mention'].getbbox(txt)[2]
