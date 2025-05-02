@@ -31,3 +31,4 @@
 # MAYBE
 - "User is typing..." indicator
 - effects/animations such as fade-in, typewriter effect, shake, zoom-in, etc
+- weird texts like `𝖞𝖔𝖚 𝖙𝖔𝖑𝖉 𝖒𝖊 𝖙𝖔 𝖈𝖆𝖑𝖒 𝖉𝖔𝖜𝖓`
