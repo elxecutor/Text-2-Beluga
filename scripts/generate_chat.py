@@ -133,11 +133,35 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
     canvas.paste(pic, tuple(L['profpic']['position']), mask)
 
     # draw name + timestamp
+        # — draw name —
     nx, ny = L['name']['pos']
     draw.text((nx, ny), actor, fill=colors[actor], font=fonts['name'])
+
+    # — load & draw badge (if defined) —
+    badge_filename = chars[actor].get('badge')
+    badge_offset = 0
+    if badge_filename:
+        badge_path = os.path.join(cfg['paths']['badges_dir'], badge_filename)
+        badge_img = Image.open(badge_path).convert('RGBA')
+        # resize to configured badge size
+        size = L['badge']['size']
+        badge_img.thumbnail((size, size), Image.LANCZOS)
+
+        # position badge vertically centered on the name line
+        text_h = fonts['name'].getbbox(actor)[3]
+        by = ny + (text_h - size + L['badge']['spacing']) // 2
+        bx = nx + fonts['name'].getbbox(actor)[2] + L['badge']['spacing']
+
+        canvas.paste(badge_img, (bx, by), badge_img)
+        badge_offset = size + L['badge']['spacing']
+
+    # — draw timestamp, shifted right by name width + badge_offset + spacing —
     ts = now.strftime('%-I:%M %p')
-    tx = nx + fonts['name'].getbbox(actor)[2] + L['time']['spacing']
-    draw.text((tx, ny+10), f"Today at {ts}", fill=tuple(L['time']['color']), font=fonts['time'])
+    tx = nx + fonts['name'].getbbox(actor)[2] + badge_offset + L['time']['spacing']
+    draw.text((tx, ny + 10),
+              f"Today at {ts}",
+              fill=tuple(L['time']['color']),
+              font=fonts['time'])
 
     # ——— ADD: draw "(edited)" next to timestamp if flagged —————————————
     global EDITED_FLAG
