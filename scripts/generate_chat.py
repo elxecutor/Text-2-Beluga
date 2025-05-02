@@ -91,7 +91,7 @@ def wrap_text(text, font, max_width):
         lines.append(current)
     return lines
 
-def render_block(actor, lines, cfg, fonts, profpics, colors, now):
+def render_block(actor, lines, cfg, fonts, profpics, colors, badges, now):
     """
     Renders a cumulative block of messages for `actor`, with each message
     wrapped to fit the world_width and canvas height adjusted.
@@ -138,11 +138,10 @@ def render_block(actor, lines, cfg, fonts, profpics, colors, now):
     draw.text((nx, ny), actor, fill=colors[actor], font=fonts['name'])
 
     # — load & draw badge (if defined) —
-    badge_filename = chars[actor].get('badge')
+    badge_filename = badges[actor]
     badge_offset = 0
     if badge_filename:
-        badge_path = os.path.join(cfg['paths']['badges_dir'], badge_filename)
-        badge_img = Image.open(badge_path).convert('RGBA')
+        badge_img = Image.open(badge_filename).convert('RGBA')
         # resize to configured badge size
         size = L['badge']['size']
         badge_img.thumbnail((size, size), Image.LANCZOS)
@@ -336,8 +335,8 @@ def save_images(cfg, convo, chars):
     os.makedirs(out, exist_ok=True)
 
     fonts    = init_fonts(cfg)
-    profpics = {n: os.path.join(cfg['paths']['profile_pics'], c['profile_pic'])
-                for n,c in chars.items()}
+    profpics = {n: os.path.join(cfg['paths']['profile_pics'], c['profile_pic'])for n,c in chars.items()}
+    badges = {n: os.path.join(cfg['paths']['badges_dir'], c['badge']) if c['badge'] else None for n, c in chars.items()}
     colors   = {n: rgb(c['role_color']) for n,c in chars.items()}
 
     now = datetime.datetime.now()
@@ -360,7 +359,7 @@ def save_images(cfg, convo, chars):
                 current_actor = ev['actor']
                 current_lines = [msg]
 
-            img = render_block(current_actor, current_lines, cfg, fonts, profpics, colors, now)
+            img = render_block(current_actor, current_lines, cfg, fonts, profpics, colors, badges, now)
             img.save(os.path.join(out, f"{idx:03d}.png"))
             now += datetime.timedelta(minutes=ev['duration'])
             idx += 1

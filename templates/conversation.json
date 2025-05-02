@@ -8,7 +8,21 @@
   {
     "type": "message",
     "actor": "ActorName",
-    "text": "Your message text here",
+    "text": "Hello **World**! This message supports *italic*, ***bold italic***, and ~strikethrough~ formatting.",
+    "duration": 1.5,
+    "sound": "message"
+  },
+  {
+    "type": "message",
+    "actor": "ActorName",
+    "text": "Here's a code block: ```print('Hello, World!')```",
+    "duration": 2.0,
+    "sound": "message"
+  },
+  {
+    "type": "message",
+    "actor": "ActorName",
+    "text": "Check out this link: https://www.example.com. Also, mention a user like @AnotherActor and refer to a channel such as #general.",
     "duration": 1.5,
     "sound": "message"
   },
