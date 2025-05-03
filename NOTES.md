@@ -13,12 +13,12 @@
 - Add "edited" tags and precise timestamps.
 - allow for monospace text parsing also 
 - support for links (URLs)
+- role icons for different characters
 
 ----------------------------------------------------
 
 # (TRY) TODO
 - correct the monospace code that is not getting wrapped
-- role icons for different characters
 - support for unanimated gifs
 - ability to add background music (maybe to individual messages for tempo change and shit)
 - AI powered chat script creator

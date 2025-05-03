@@ -2,6 +2,7 @@
   "paths": {
     "chat_output": "chat",
     "profile_pics": "assets/profile_pictures",
+    "badges_dir": "assets/badges",
     "sound_dir": "assets/sounds/mp3",
     "green_arrow": "assets/green_arrow.png",
     "red_arrow": "assets/red_arrow.png",
@@ -22,7 +23,8 @@
       "message_italic": { "file": "medium_italic.ttf", "size": 50 },
       "message_bold_italic": { "file": "bold_italic.ttf", "size": 50 },
       "message_strike": { "file": "medium.ttf", "size": 50 },
-      "mention": { "file": "semibold.ttf", "size": 50 }
+      "mention": { "file": "semibold.ttf", "size": 50 },
+      "monospace": { "file": "mono.ttf", "size": 35 }
     },
 
     "profpic": {
@@ -55,12 +57,17 @@
       "size": 45,
       "color": [157, 161, 164]
     },
-    
+
     "left": {
       "height": 100,
       "font": "medium.ttf",
       "size": 45,
       "color": [157, 161, 164]
+    },
+
+    "badge": {
+      "size": 50,
+      "spacing": 10
     }
   },
 
@@ -114,8 +121,18 @@
     "typing",
     "vineboom",
     "zap",
-    "error_beep",
-    "ethereal_hum",
-    "email_send"
+    "error-beep",
+    "ethereal-hum",
+    "email-send",
+    "panic",
+    "scream",
+    "sad",
+    "really?",
+    "huh",
+    "metal-pipe",
+    "get-out",
+    "beep",
+    "the-prowler",
+    "oh-my-god"
   ]
 }

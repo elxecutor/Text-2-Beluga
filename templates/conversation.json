@@ -1,7 +1,7 @@
 [
   {
     "type": "join",
-    "actor": "ActorName",
+    "actor": "AnotherActor",
     "duration": 1.0,
     "sound": "join"
   },
@@ -14,7 +14,7 @@
   },
   {
     "type": "message",
-    "actor": "ActorName",
+    "actor": "AnotherActor",
     "text": "Here's a code block: ```print('Hello, World!')```",
     "duration": 2.0,
     "sound": "message"
