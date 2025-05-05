@@ -18,17 +18,17 @@
 ----------------------------------------------------
 
 # (TRY) TODO
-- correct the monospace code that is not getting wrapped
-- support for unanimated gifs
+- support for unanimated and animated gifs
 - ability to add background music (maybe to individual messages for tempo change and shit)
-- AI powered chat script creator
-- improve script_validator.py
 - Add a fade transition between clips
-- Text2Beluga discord bot
 
 ----------------------------------------------------
 
 # MAYBE
+- Text2Beluga discord bot
+- AI powered chat script creator
+- improve script_validator.py
+- correct the monospace code that is not getting wrapped
 - "User is typing..." indicator
 - effects/animations such as fade-in, typewriter effect, shake, zoom-in, etc
 - weird texts like `𝖞𝖔𝖚 𝖙𝖔𝖑𝖉 𝖒𝖊 𝖙𝖔 𝖈𝖆𝖑𝖒 𝖉𝖔𝖜𝖓`
