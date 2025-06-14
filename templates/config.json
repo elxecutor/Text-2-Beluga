@@ -4,6 +4,7 @@
     "profile_pics": "assets/profile_pictures",
     "badges_dir": "assets/badges",
     "sound_dir": "assets/sounds/mp3",
+    "theme_dir": "assets/sounds/themes",
     "green_arrow": "assets/green_arrow.png",
     "red_arrow": "assets/red_arrow.png",
     "fonts_dir": "assets/fonts/whitney",
@@ -138,7 +139,15 @@
     "gay-all-ur-life",
     "oh-my-god-bro-oh-hell-nah-man",
     "sus",
-    "there-are-consequences-of-saying-the-n-word",
-    "why-are-you-gay"
+    "there-are-consequences-of-saying-the-n-word"
+  ],
+  "theme_codes": [
+    "english-or-spanish",
+    "giorno-theme",
+    "its-coming-out",
+    "king-baldwin",
+    "nfl-theme",
+    "rizz",
+    "ultra-instinct-opening-theme-creator-sound-effect-hd"
   ]
 }
