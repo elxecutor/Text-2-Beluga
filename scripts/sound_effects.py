@@ -2,44 +2,91 @@
 
 #!/usr/bin/env python3
 import os, json, argparse
-from moviepy.editor import VideoFileClip, AudioFileClip, CompositeAudioClip
+from moviepy.editor import VideoFileClip, AudioFileClip, CompositeAudioClip, concatenate_audioclips, afx
 
-def load_config(p): return json.load(open(p, encoding='utf8'))
+def load_config(path):
+    with open(path, encoding='utf8') as f:
+        return json.load(f)
 
-def add_sounds(cfg, convo, silent, final):
-    video = VideoFileClip(silent)
-    clips = []
-    t = 0.0
-    sd = cfg['paths']['sound_dir']
-    for ev in convo:
-        dur = float(ev['duration'])
-        fn = os.path.join(sd, f"{ev.get('sound')}.mp3")
-        if ev.get('sound') and os.path.isfile(fn):
-            clips.append(AudioFileClip(fn).set_start(t))
-        t += dur
-    if clips:
-        video = video.set_audio(CompositeAudioClip(clips))
-    video.write_videofile(final, codec='libx264', audio_codec='aac',
+def find_theme_change_indices(convo):
+    # Change themes based on key moments or pacing.
+    # Naively, every 5-7 messages or every "explosion", "scream", "panic", etc.
+    theme_events = []
+    current_theme = 0
+    for i, event in enumerate(convo):
+        if event.get("sound") in {"explosion", "scream", "panic", "modeugene", "oh-my-god-bro-oh-hell-nah-man"}:
+            theme_events.append((i, current_theme))
+            current_theme += 1
+    return theme_events
+
+def add_sounds_and_themes(cfg, convo, silent_video_path, final_video_path):
+    video = VideoFileClip(silent_video_path)
+    event_clips = []
+    theme_clips = []
+
+    sound_dir = cfg['paths']['sound_dir']
+    theme_dir = cfg['paths']['theme_dir']  # Assuming theme tracks also reside here
+    themes = cfg.get('theme_codes', [])
+    total_duration = 0.0
+
+    # Add sound effect clips
+    for event in convo:
+        dur = float(event['duration'])
+        sound_name = event.get('sound')
+        if sound_name:
+            sound_path = os.path.join(sound_dir, f"{sound_name}.mp3")
+            if os.path.isfile(sound_path):
+                event_clips.append(AudioFileClip(sound_path).set_start(total_duration))
+        total_duration += dur
+
+    # Add background themes
+    theme_points = find_theme_change_indices(convo)
+    if not theme_points:
+        theme_points = [(0, 0)]  # fallback
+
+    # Calculate theme segments
+    theme_points.append((len(convo), len(themes)-1))  # mark end
+    timeline = 0.0
+    for (start_idx, theme_idx), (end_idx, _) in zip(theme_points, theme_points[1:]):
+        if theme_idx >= len(themes):
+            break
+        segment_duration = sum(float(convo[i]['duration']) for i in range(start_idx, end_idx))
+        theme_file = os.path.join(theme_dir, f"{themes[theme_idx]}.mp3")
+        if os.path.isfile(theme_file):
+            theme_clip = AudioFileClip(theme_file)
+            theme_clip = afx.audio_loop(theme_clip, duration=segment_duration).volumex(0.15)
+            theme_clips.append(theme_clip.set_start(timeline))
+        timeline += segment_duration
+
+    # Mix all clips together
+    all_audio = event_clips + theme_clips
+    if all_audio:
+        video = video.set_audio(CompositeAudioClip(all_audio))
+
+    video.write_videofile(final_video_path, codec='libx264', audio_codec='aac',
                           temp_audiofile='temp-audio.m4a', remove_temp=True)
     video.close()
 
 def main():
-    p = argparse.ArgumentParser()
-    p.add_argument('--config',       default='utils/config.json')
-    p.add_argument('--conversation', default='utils/conversation.json')
-    p.add_argument('--input-video',  default=None)
-    p.add_argument('--output-video', default=None)
-    args = p.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config',       default='utils/config.json')
+    parser.add_argument('--conversation', default='utils/conversation.json')
+    parser.add_argument('--input-video',  default=None)
+    parser.add_argument('--output-video', default=None)
+    args = parser.parse_args()
 
-    cfg   = load_config(args.config)
-    convo = json.load(open(args.conversation, encoding='utf8'))
-    silent = args.input_video  or cfg['paths']['intermediate_video']
-    final  = args.output_video or cfg['paths']['final_video']
+    cfg = load_config(args.config)
+    with open(args.conversation, encoding='utf8') as f:
+        convo = json.load(f)
 
-    if not os.path.isfile(silent):
-        print(f"Error: missing {silent}")
+    input_video = args.input_video or cfg['paths']['intermediate_video']
+    output_video = args.output_video or cfg['paths']['final_video']
+
+    if not os.path.isfile(input_video):
+        print(f"Error: missing {input_video}")
         return
-    add_sounds(cfg, convo, silent, final)
 
-if __name__=='__main__':
+    add_sounds_and_themes(cfg, convo, input_video, output_video)
+
+if __name__ == '__main__':
     main()
