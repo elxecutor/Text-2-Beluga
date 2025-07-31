@@ -14,14 +14,17 @@ def main():
     args = p.parse_args()
 
     cfg   = load_config(args.config)
-    convo = json.load(open(args.conversation, encoding='utf8'))
+    with open(args.conversation, encoding='utf8') as f:
+        convo = json.load(f)
 
     errs = validate(convo, cfg)
     if errs:
         print("Validation failed:", *errs, sep="\n - ")
         sys.exit(1)
 
-    save_images(cfg, convo, json.load(open(args.characters, encoding='utf8')))
+    with open(args.characters, encoding='utf8') as f:
+        chars = json.load(f)
+    save_images(cfg, convo, chars)
     compile_video(cfg, convo)
 
     # mix in sounds
@@ -31,8 +34,26 @@ def main():
       '--input-video',  cfg['paths']['ffmpeg_output'],
       '--output-video', cfg['paths']['final_video']
     ]
-    # you can invoke sound_main via subprocess if needed, or adapt its signature
+    # Call sound_main with the prepared arguments
+    original_argv = sys.argv
+    sys.argv = ['sound_effects.py'] + sound_main_args
     sound_main()
+    sys.argv = original_argv
+
+    # Clean up temporary files after final video creation (if enabled)
+    if cfg.get('video_settings', {}).get('cleanup_temp_files', True):
+        chat_folder = cfg['paths']['chat_output']
+        if os.path.exists(chat_folder):
+            try:
+                import shutil
+                shutil.rmtree(chat_folder)
+                print(f"✅ Cleaned up temporary chat images: {chat_folder}")
+            except Exception as e:
+                print(f"⚠️ Warning: Could not clean up chat folder: {e}")
+        else:
+            print("ℹ️  No chat folder found to cleanup")
+    else:
+        print("ℹ️  Cleanup disabled - temporary chat images preserved")
 
     print("✅ All done! Final video at", cfg['paths']['final_video'])
 

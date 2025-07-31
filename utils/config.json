@@ -69,7 +69,26 @@
     "badge": {
       "size": 50,
       "spacing": 10
+    },
+
+    "attachment": {
+      "x": 190,
+      "max_width": 400,
+      "max_height": 300,
+      "padding": 10,
+      "text_box_height": 60,
+      "other_box_height": 50,
+      "border_color": [100, 100, 100],
+      "text_color": [220, 222, 225, 255]
     }
+  },
+
+  "video_settings": {
+    "fade_transitions": false,
+    "fade_duration": 0.3,
+    "frame_rate": 25,
+    "quality": 25,
+    "cleanup_temp_files": true
   },
 
   "joined_texts": [
@@ -139,7 +158,10 @@
     "gay-all-ur-life",
     "oh-my-god-bro-oh-hell-nah-man",
     "sus",
-    "there-are-consequences-of-saying-the-n-word"
+    "there-are-consequences-of-saying-the-n-word",
+    "chill_beat",
+    "epic_music",
+    "ambient_sound"
   ],
   "theme_codes": [
     "english-or-spanish",

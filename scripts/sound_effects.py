@@ -29,14 +29,32 @@ def add_sounds_and_themes(cfg, convo, silent_video_path, final_video_path):
     themes = cfg.get('theme_codes', [])
     total_duration = 0.0
 
-    # Add sound effect clips
+    # Add sound effect clips and individual background music
     for event in convo:
         dur = float(event['duration'])
+        
+        # Add sound effects
         sound_name = event.get('sound')
         if sound_name:
             sound_path = os.path.join(sound_dir, f"{sound_name}.mp3")
             if os.path.isfile(sound_path):
                 event_clips.append(AudioFileClip(sound_path).set_start(total_duration))
+        
+        # Add individual background music for messages
+        if event.get('type') == 'message' and 'background_music' in event:
+            bg_music_name = event['background_music']
+            bg_music_path = os.path.join(sound_dir, f"{bg_music_name}.mp3")
+            if os.path.isfile(bg_music_path):
+                bg_clip = AudioFileClip(bg_music_path)
+                # Loop or trim to match message duration
+                if bg_clip.duration < dur:
+                    bg_clip = afx.audio_loop(bg_clip, duration=dur)
+                else:
+                    bg_clip = bg_clip.subclip(0, dur)
+                # Lower volume for background music
+                bg_clip = bg_clip.volumex(0.3)
+                theme_clips.append(bg_clip.set_start(total_duration))
+        
         total_duration += dur
 
     # Add background themes

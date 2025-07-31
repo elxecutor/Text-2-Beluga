@@ -1,0 +1,107 @@
+{
+    "Bingus": {
+        "profile_pic": "perm/bingus.jpg",
+        "role_color": "#a1cfff",
+        "badge": ""
+    },
+    "Billy": {
+        "profile_pic": "perm/billy.jpeg",
+        "role_color": "#ffe0a3",
+        "badge": ""
+    },
+    "Pizza": {
+        "profile_pic": "perm/pizza.jpeg",
+        "role_color": "#ccffdd",
+        "badge": "mod.png"
+    },
+    "Nerd": {
+        "profile_pic": "perm/nerd.jpg",
+        "role_color": "#e0d4ff",
+        "badge": ""
+    },
+    "Cashew": {
+        "profile_pic": "perm/cashew.jpg",
+        "role_color": "#d4ffee",
+        "badge": ""
+    },
+    "Peanut": {
+        "profile_pic": "perm/peanut.png",
+        "role_color": "#ffb4c1",
+        "badge": ""
+    },
+    "Cheddar": {
+        "profile_pic": "perm/cheddar.png",
+        "role_color": "#b4ffac",
+        "badge": ""
+    },
+    "Bot": {
+        "profile_pic": "perm/bot.png",
+        "role_color": "#c1d4ff",
+        "badge": "bot.png"
+    },
+    "SilverbackSam": {
+        "profile_pic": "temp/silverback.jpg",
+        "role_color": "#ffb4b4",
+        "badge": ""
+    },
+    "GrizzlyGreg": {
+        "profile_pic": "temp/grizzly.jpg",
+        "role_color": "#ff5733",
+        "badge": ""
+    },
+    "KingKongKevin": {
+        "profile_pic": "temp/kingkong.jpg",
+        "role_color": "#8B0000",
+        "badge": ""
+    },
+    "Ed": {
+        "profile_pic": "temp/ed.jpg",
+        "role_color": "#fa8072",
+        "badge": ""
+    },
+    "Colin": {
+        "profile_pic": "temp/colin.png",
+        "role_color": "#98fb98",
+        "badge": ""
+    },
+    "Rita": {
+        "profile_pic": "temp/rita.webp",
+        "role_color": "#dda0dd",
+        "badge": ""
+    },
+    "PR": {
+        "profile_pic": "temp/pr.jpg",
+        "role_color": "#87ceeb",
+        "badge": ""
+    },
+    "Fred": {
+        "profile_pic": "temp/fred.webp",
+        "role_color": "#ffdead",
+        "badge": ""
+    },
+    "Jessica": {
+        "profile_pic": "temp/jessica.png",
+        "role_color": "#e6e6fa",
+        "badge": ""
+    },
+    "Ella": {
+        "profile_pic": "temp/ella.jpg",
+        "role_color": "#f0e68c",
+        "badge": ""
+    },
+    "Olivia": {
+        "profile_pic": "temp/olivia.jpg",
+        "role_color": "#ffb6c1",
+        "badge": ""
+    },
+    "Trent": {
+        "profile_pic": "temp/trent.jpg",
+        "role_color": "#d3d3d3",
+        "badge": ""
+    },
+    "Max": {
+        "profile_pic": "temp/max.jpg",
+        "role_color": "#add8e6",
+        "badge": ""
+    }
+}
