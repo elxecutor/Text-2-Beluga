@@ -1,0 +1,397 @@
+[
+  {
+    "type": "join",
+    "actor": "Pizza",
+    "duration": 1.0,
+    "sound": "join"
+  },
+  {
+    "type": "join",
+    "actor": "Bingus",
+    "duration": 1.0,
+    "sound": "join"
+  },
+  {
+    "type": "join",
+    "actor": "Nerd",
+    "duration": 1.0,
+    "sound": "join"
+  },
+  {
+    "type": "join",
+    "actor": "Bot",
+    "duration": 1.0,
+    "sound": "join"
+  },
+  {
+    "type": "typing",
+    "actor": "Pizza",
+    "duration": 2.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "🎉 Welcome to the comprehensive **Text2Beluga** feature test! Let's test ***everything***!",
+    "duration": 3.0,
+    "sound": "message"
+  },
+  {
+    "type": "typing",
+    "actor": "Bingus",
+    "duration": 1.5,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bingus",
+    "text": "Testing **bold**, *italic*, ***bold italic***, ~~strikethrough~~, and monospace text formatting! 😎",
+    "duration": 3.0,
+    "sound": "message"
+  },
+  {
+    "type": "typing",
+    "actor": "Nerd",
+    "duration": 2.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "Check out this Unicode text and some emojis: 🔥💯⚡🚀",
+    "duration": 4.0,
+    "sound": "vineboom"
+  },
+  {
+    "type": "typing",
+    "actor": "Bot",
+    "duration": 1.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bot",
+    "text": "Here's some regular text instead of code! 🤖✨",
+    "duration": 4.0,
+    "sound": "beep"
+  },
+  {
+    "type": "typing",
+    "actor": "Pizza",
+    "duration": 1.5,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "Testing URLs: https://github.com/elxecutor/Text-2-Beluga and http://example.com work perfectly!",
+    "duration": 3.0,
+    "sound": "click",
+    "background_music": "giorno-theme"
+  },
+  {
+    "type": "typing",
+    "actor": "Bingus",
+    "duration": 2.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bingus",
+    "text": "Image attachment test 📷",
+    "duration": 2.5,
+    "sound": "pop",
+    "attachments": [
+      {
+        "type": "image",
+        "path": "assets/red_arrow.png",
+        "filename": "red_arrow.png"
+      }
+    ]
+  },
+  {
+    "type": "typing",
+    "actor": "Nerd",
+    "duration": 1.8,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "GIF attachment demonstration! 🎬",
+    "duration": 3.0,
+    "sound": "zap",
+    "attachments": [
+      {
+        "type": "image",
+        "path": "assets/red_arrow.png",
+        "filename": "red_arrow.png"
+      }
+    ]
+  },
+  {
+    "type": "typing",
+    "actor": "Bot",
+    "duration": 1.2,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bot",
+    "text": "Testing multiple attachments at once! 📸🎥",
+    "duration": 3.5,
+    "sound": "email-send",
+    "attachments": [
+      {
+        "type": "image",
+        "path": "assets/green_arrow.png",
+        "filename": "green_arrow.png"
+      },
+      {
+        "type": "image",
+        "path": "assets/red_arrow.png",
+        "filename": "red_arrow.png"
+      }
+    ]
+  },
+  {
+    "type": "typing",
+    "actor": "Pizza",
+    "duration": 2.5,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "Background music test with epic theme! 🎵🎶",
+    "duration": 5.0,
+    "sound": "cough",
+    "background_music": "giorno-theme"
+  },
+  {
+    "type": "typing",
+    "actor": "Bingus",
+    "duration": 1.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bingus",
+    "text": "Mentions test: Hey @Pizza @Nerd @Bot! And channel: #general",
+    "duration": 2.5,
+    "sound": "knock"
+  },
+  {
+    "type": "typing",
+    "actor": "Nerd",
+    "duration": 2.2,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "Sound effects showcase! 💥🔊",
+    "duration": 2.0,
+    "sound": "explosion",
+    "background_music": "ultra-instinct-opening-theme-creator-sound-effect-hd"
+  },
+  {
+    "type": "typing",
+    "actor": "Bot",
+    "duration": 1.5,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bot",
+    "text": "Error simulation! ⚠️",
+    "duration": 1.5,
+    "sound": "error-beep"
+  },
+  {
+    "type": "typing",
+    "actor": "Pizza",
+    "duration": 1.8,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "Scary sound test! 👻💀",
+    "duration": 2.0,
+    "sound": "scary",
+    "background_music": "its-coming-out"
+  },
+  {
+    "type": "typing",
+    "actor": "Bingus",
+    "duration": 1.3,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bingus",
+    "text": "Confusion sound! 🤔❓",
+    "duration": 1.5,
+    "sound": "confusion"
+  },
+  {
+    "type": "typing",
+    "actor": "Nerd",
+    "duration": 1.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "Metal pipe! 🔧",
+    "duration": 1.0,
+    "sound": "metal-pipe"
+  },
+  {
+    "type": "typing",
+    "actor": "Bot",
+    "duration": 2.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bot",
+    "text": "Ambient background test with soft message sound 🌊✨",
+    "duration": 4.0,
+    "sound": "softmessage",
+    "background_music": "king-baldwin"
+  },
+  {
+    "type": "typing",
+    "actor": "Pizza",
+    "duration": 1.5,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "Vine boom classic! 💥",
+    "duration": 1.5,
+    "sound": "vineboom"
+  },
+  {
+    "type": "typing",
+    "actor": "Bingus",
+    "duration": 1.2,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bingus",
+    "text": "Prowler sound! 🕷️",
+    "duration": 2.0,
+    "sound": "the-prowler",
+    "background_music": "nfl-theme"
+  },
+  {
+    "type": "typing",
+    "actor": "Nerd",
+    "duration": 1.8,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "Meme sounds: really? huh? 😲",
+    "duration": 2.5,
+    "sound": "really?"
+  },
+  {
+    "type": "typing",
+    "actor": "Bot",
+    "duration": 1.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bot",
+    "text": "Panic mode! 😱",
+    "duration": 1.5,
+    "sound": "panic"
+  },
+  {
+    "type": "typing",
+    "actor": "Pizza",
+    "duration": 1.4,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Pizza",
+    "text": "Laugh track! 😂🤣",
+    "duration": 2.0,
+    "sound": "laugh",
+    "background_music": "rizz"
+  },
+  {
+    "type": "typing",
+    "actor": "Bingus",
+    "duration": 1.6,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bingus",
+    "text": "Sus sound! 📮",
+    "duration": 1.5,
+    "sound": "sus"
+  },
+  {
+    "type": "typing",
+    "actor": "Nerd",
+    "duration": 2.0,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Nerd",
+    "text": "Final test with fade out effect! ✨🌅",
+    "duration": 3.0,
+    "sound": "ethereal-hum",
+    "background_music": "king-baldwin"
+  },
+  {
+    "type": "typing",
+    "actor": "Bot",
+    "duration": 1.5,
+    "sound": "typing"
+  },
+  {
+    "type": "message",
+    "actor": "Bot",
+    "text": "✅ **COMPREHENSIVE TEST COMPLETE!** All features tested:\n• Text formatting (bold, italic, strikethrough)\n• Unicode & emojis\n• URLs\n• Attachments (images & GIFs)\n• Background music\n• Sound effects\n• Mentions & channels\n• Typing indicators",
+    "duration": 8.0,
+    "sound": "oh-my-god",
+    "background_music": "english-or-spanish"
+  },
+  {
+    "type": "leave",
+    "actor": "Nerd",
+    "duration": 1.0,
+    "sound": "leave"
+  },
+  {
+    "type": "leave",
+    "actor": "Bot",
+    "duration": 1.0,
+    "sound": "leave"
+  },
+  {
+    "type": "leave",
+    "actor": "Bingus",
+    "duration": 1.0,
+    "sound": "leave"
+  },
+  {
+    "type": "leave",
+    "actor": "Pizza",
+    "duration": 1.0,
+    "sound": "leave"
+  }
+]
